@@ -35,7 +35,7 @@ namespace CodenameIndigo.Modules
         
         public static MySqlConnection GetClosedConnection()
         {
-            string connStr = $"Server={Sneaky.DatabaseUrl};Uid={Sneaky.User};Database=bulbaleague;port=3306;Password={Sneaky.Password};SslMode=none";
+            string connStr = $"Server={Sneaky.DatabaseUrl};Uid={Sneaky.User};Database=bulbaleague;port=3306;Password={Sneaky.Password};SslMode=none;CharSet=utf8mb4";
             MySqlConnection conn = new MySqlConnection(connStr) { };
             return conn;
         }
