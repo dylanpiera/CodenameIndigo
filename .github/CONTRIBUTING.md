@@ -8,6 +8,7 @@ These are mostly guidelines, not rules. Use your best judgement, and feel free t
 
 ### Table of Contents
 [TL;dr How do I help!](#tl-dr-how-do-i-help)
+
 [What should I know before I get started?](#what-should-i-know-before-i-get-started)
 
 [How Can I Contribute?](#how-can-i-contribute?)
