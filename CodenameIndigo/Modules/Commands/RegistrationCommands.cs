@@ -21,6 +21,7 @@ namespace CodenameIndigo.Modules
 
             try
             {
+                await ReplyAndDeleteAsync($"Hey {Context.User.Mention}! I've send you a PM with the info!", false, null, TimeSpan.FromSeconds(15));
                 await Context.Message.DeleteAsync();
             }
             catch { }
@@ -36,6 +37,7 @@ namespace CodenameIndigo.Modules
                 $"Please provide your Showdown Username?",
                 Footer = new EmbedFooterBuilder() { Text = "If you do not answer within 2 minutes you will need to use `?register` again." }
             });
+            await Task.Delay(500);
             SocketMessage response = await NextMessageAsync(new EnsureChannelCriterion(channel.Id), TimeSpan.FromMinutes(2));
             player.ShowdownName = response.Content;
 
@@ -61,10 +63,11 @@ namespace CodenameIndigo.Modules
             {
                 Color = Color.Blue,
                 Title = "☆ BulbaLeague Signups ☆",
-                Description = $"Is this data correct? Please respond with Yes or No\n" +
+                Description = $"Is this data correct?\n" +
                 $"**Discord Username:** {player.DiscordName}\n" +
                 $"**Showdown Username:** {player.ShowdownName}\n" +
-                $"**Team:** ```{player.Team}```",
+                $"**Team:** ```{player.Team}```\n" +
+                $"Please respond with Yes or No",
                 Footer = new EmbedFooterBuilder() { Text = "If you do not answer within 2 minutes you will need to use `?register` again." }
             });
             Confirm:
