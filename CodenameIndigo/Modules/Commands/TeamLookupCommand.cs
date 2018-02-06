@@ -32,7 +32,7 @@ namespace CodenameIndigo.Modules.Commands
                     }
                 }
                 if (string.IsNullOrEmpty(team))
-                    await Context.Channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "User not Found", Description = "It appears that user isn't registered for the tournament.", Color = Color.Red });
+                    await Context.Channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "Player not Found", Description = "It appears that user isn't registered for the tournament.", Color = Color.Red });
                 else
                     await Context.Channel.SendMessageAsync("", false, new EmbedBuilder() { Title = $"{mention.Username}'s Team", Description = team });
             }
@@ -45,6 +45,12 @@ namespace CodenameIndigo.Modules.Commands
             {
                 await conn.CloseAsync();
             }
+        }
+
+        [Command("lookup"), Priority(-1)]
+        public async Task LookupCommand([Remainder] string s)
+        {
+            await Context.Channel.SendMessageAsync("",false,new EmbedBuilder() {Title = "User Not Found", Description = $"The user {s} doesn't exist.", Color = Color.Red });
         }
     }
 }
