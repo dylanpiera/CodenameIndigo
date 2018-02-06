@@ -1,1 +1,6 @@
-language: c#
+language: csharp
+mono: none
+dotnet: 2.0
+solution: CodenameIndigo.sln
+script:
+- dotnet restore
