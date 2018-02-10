@@ -14,7 +14,7 @@ namespace CodenameIndigo.Modules
 {
     public class RegistrationCommands : InteractiveBase
     {
-        [Command("register", RunMode = RunMode.Async), Alias(new[] { "signup" }), SignupPrecon()]
+        [Command("register", RunMode = RunMode.Async), Alias(new[] { "signup" }), InSignupPrecon(), UserNotRegisteredPrecon()]
         public async Task Register()
         {
             Player player = new Player() { Id = Context.User.Id, DiscordName = Context.User.Username + "#" + Context.User.Discriminator };
@@ -39,6 +39,11 @@ namespace CodenameIndigo.Modules
             });
             await Task.Delay(500);
             SocketMessage response = await NextMessageAsync(new EnsureChannelCriterion(channel.Id), TimeSpan.FromMinutes(2));
+            if(response.Content.Length > 18)
+            {
+                await channel.SendMessageAsync("", false, new EmbedBuilder() {Title = "Invalid Name!", Color = Color.Red, Description = "Please provide a valid showdown name." });
+                goto Restart;
+            }
             player.ShowdownName = response.Content;
 
             Team:

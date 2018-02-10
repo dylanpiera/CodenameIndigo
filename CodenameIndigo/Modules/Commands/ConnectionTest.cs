@@ -1,18 +1,20 @@
-﻿using Discord;
-using Discord.Addons.Interactive;
+﻿using Discord.Addons.Interactive;
 using Discord.Commands;
 using MySql.Data.MySqlClient;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
+using System.Linq;
 
 namespace CodenameIndigo.Modules
 {
     public class ConnectionTest : InteractiveBase
     {
+        [Command("unix")]
+        public async Task Unix()
+        {
+            await Context.Channel.SendMessageAsync(DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString());
+        }
+
         [Command("conntest")]
         public async Task ConnTest()
         {
