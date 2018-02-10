@@ -97,16 +97,19 @@ namespace CodenameIndigo.Modules.Commands
                     {
                         DateTimeOffset date = Convert.ToDateTime(response.Content);
                         date = date.AddHours(date.Offset.Hours);
-                        await Program.Log(date.ToString());
+                        if(date.DayOfYear < DateTime.Now.DayOfYear || date.Year < DateTime.Now.Year)
+                        {
+                            await channel.SendMessageAsync("", false, new EmbedBuilder() {Title = "Wrong Input!", Color = Color.Red, Description = "The date needs to be today or later!" });
+                            goto Date_Time;
+                        }
                         try
                         {
                             await conn.OpenAsync();
 
                             cmd = new MySqlCommand($"UPDATE `setup` SET `end_date` = {date.ToUnixTimeSeconds()}  WHERE `tourney_id` = 1", conn);
-                            await Program.Log(cmd.CommandText);
                             await cmd.ExecuteNonQueryAsync();
                             await channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "Edit Succesfull!", Color = Color.Green, Description = "Successfully changed the date. Returning to menu."});
-                            await Task.Delay(500);
+                            await Task.Delay(1000);
                         }
                         catch (Exception e)
                         {
