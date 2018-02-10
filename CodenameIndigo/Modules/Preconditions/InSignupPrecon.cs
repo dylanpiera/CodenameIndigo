@@ -12,7 +12,36 @@ namespace CodenameIndigo.Modules.Preconditions
     {
         public async override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider services)
         {
-            return PreconditionResult.FromSuccess();
+            MySqlConnection conn = ConnectionTest.GetClosedConnection();
+            long UNIXTime = 0;
+            try
+            {
+                await conn.OpenAsync();
+
+                MySqlCommand cmd = new MySqlCommand("SELECT `end_date` FROM `setup` WHERE `tourney_id` = 1", conn);
+
+
+
+                using (MySqlDataReader reader = (MySqlDataReader)await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        UNIXTime = reader.GetInt64(0);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                await Program.Log(e.ToString(), "SignupDate SQL", LogSeverity.Error);
+            }
+            finally
+            {
+                await conn.CloseAsync();
+            }
+            if (UNIXTime > DateTimeOffset.Now.ToUnixTimeSeconds())
+                return PreconditionResult.FromSuccess();
+            await context.Channel.SendMessageAsync("Signups for the current tournament aren't open.");
+            return PreconditionResult.FromError("");
         }
     }
 }
