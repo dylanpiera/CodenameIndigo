@@ -27,7 +27,7 @@ namespace CodenameIndigo.Modules.Commands
             IDMChannel channel = await Context.User.GetOrCreateDMChannelAsync();
             MySqlConnection conn = ConnectionTest.GetClosedConnection();
 
-            EmbedBuilder builder = new EmbedBuilder() {Title = "Mod CP", Color = Color.DarkGrey, Footer = new EmbedFooterBuilder() { Text = "If you do not answer within 2 minutes you will need to use `?modcp` again." } };
+            EmbedBuilder builder = new EmbedBuilder() { Title = "Mod CP", Color = Color.DarkGrey, Footer = new EmbedFooterBuilder() { Text = "If you do not answer within 2 minutes you will need to use `?modcp` again." } };
             builder.Description = $"Hey there {Context.User.Username}! Please choose one of these options by sending their number to me.\n" +
                 $"1. Show/Change Signup Date\n" +
                 $"2. Show/Change Min player amount\n" +
@@ -35,14 +35,14 @@ namespace CodenameIndigo.Modules.Commands
                 $"4. Start New Tourney - **Warning Destructive action**\n" +
                 $"5. Close Menu";
             Restart:
-            await channel.SendMessageAsync("",false, builder.Build());
+            await channel.SendMessageAsync("", false, builder.Build());
             await Task.Delay(500);
 
             SocketMessage response = await NextMessageAsync(new EnsureChannelCriterion(channel.Id), TimeSpan.FromMinutes(2));
 
-            if(Int32.TryParse(response.Content, out int choice))
+            if (Int32.TryParse(response.Content, out int choice))
             {
-                switch(choice)
+                switch (choice)
                 {
                     case 1:
                         goto SignupDate;
@@ -59,7 +59,7 @@ namespace CodenameIndigo.Modules.Commands
             else
             {
                 await channel.SendMessageAsync("Please choose one of the options.");
-                goto Restart; 
+                goto Restart;
             }
             #region SignupDate
             SignupDate:
@@ -81,12 +81,16 @@ namespace CodenameIndigo.Modules.Commands
 
                 DateTimeOffset offset = DateTimeOffset.FromUnixTimeSeconds(UNIXTime);
                 await conn.CloseAsync();
-                await channel.SendMessageAsync("", false, new EmbedBuilder() {Title = "Registration End Date", Description = $"The current registration end date is set to: {offset.ToString("dd-MM-yyyy")}\n" +
-                    $"If you would like to alter it, please send `edit`. Send anything else to return to the main menu." });
+                await channel.SendMessageAsync("", false, new EmbedBuilder()
+                {
+                    Title = "Registration End Date",
+                    Description = $"The current registration end date is set to: {offset.ToString("dd-MM-yyyy")}\n" +
+                    $"If you would like to alter it, please send `edit`. Send anything else to return to the main menu."
+                });
                 await Task.Delay(500);
 
                 response = await NextMessageAsync(new EnsureChannelCriterion(channel.Id), TimeSpan.FromMinutes(2));
-                if(response.Content.ToLower().StartsWith("edit"))
+                if (response.Content.ToLower().StartsWith("edit"))
                 {
                     Date_Time:
                     await channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "Registration End Date", Description = "Please provide the end date in the following format: DD-MM-YYYY" });
@@ -97,9 +101,9 @@ namespace CodenameIndigo.Modules.Commands
                     {
                         DateTimeOffset date = Convert.ToDateTime(response.Content);
                         date = date.AddHours(date.Offset.Hours);
-                        if(date.DayOfYear < DateTime.Now.DayOfYear || date.Year < DateTime.Now.Year)
+                        if (date.DayOfYear < DateTime.Now.DayOfYear || date.Year < DateTime.Now.Year)
                         {
-                            await channel.SendMessageAsync("", false, new EmbedBuilder() {Title = "Wrong Input!", Color = Color.Red, Description = "The date needs to be today or later!" });
+                            await channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "Wrong Input!", Color = Color.Red, Description = "The date needs to be today or later!" });
                             goto Date_Time;
                         }
                         try
@@ -108,7 +112,7 @@ namespace CodenameIndigo.Modules.Commands
 
                             cmd = new MySqlCommand($"UPDATE `setup` SET `end_date` = {date.ToUnixTimeSeconds()}  WHERE `tourney_id` = 1", conn);
                             await cmd.ExecuteNonQueryAsync();
-                            await channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "Edit Succesfull!", Color = Color.Green, Description = "Successfully changed the date. Returning to menu."});
+                            await channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "Edit Succesfull!", Color = Color.Green, Description = "Successfully changed the date. Returning to menu." });
                             await Task.Delay(1000);
                         }
                         catch (Exception e)
@@ -122,7 +126,7 @@ namespace CodenameIndigo.Modules.Commands
                         await Program.Log(e.ToString(), "DateTime Convesion", LogSeverity.Warning);
                         goto Date_Time;
                     }
-                }   
+                }
             }
             catch (Exception e)
             {
@@ -135,13 +139,172 @@ namespace CodenameIndigo.Modules.Commands
             goto Restart;
             #endregion
 
+            #region MinPlayer
             MinPlayer:
+            try
+            {
+                await conn.OpenAsync();
 
+                MySqlCommand cmd = new MySqlCommand("SELECT `min_players` FROM `setup` WHERE `tourney_id` = 1", conn);
+
+                int min_players = 0;
+
+                using (MySqlDataReader reader = (MySqlDataReader)await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        min_players = reader.GetInt16(0);
+                    }
+                }
+                await conn.CloseAsync();
+                await channel.SendMessageAsync("", false, new EmbedBuilder()
+                {
+                    Title = "Registration Min Players",
+                    Description = $"The current minimum amount of players is {min_players} (minimum minimum is 2)\n" +
+                    $"If you would like to alter it, please send `edit`. Send anything else to return to the main menu."
+                });
+                await Task.Delay(500);
+
+                response = await NextMessageAsync(new EnsureChannelCriterion(channel.Id), TimeSpan.FromMinutes(2));
+                if (response.Content.ToLower().StartsWith("edit"))
+                {
+                    Min_Players:
+                    await channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "Registration Min Players", Description = "What will be the minimum amount of players? (min 2)" });
+                    await Task.Delay(500);
+
+                    response = await NextMessageAsync(new EnsureChannelCriterion(channel.Id), TimeSpan.FromMinutes(2));
+                    try
+                    {
+                        if (Int32.TryParse(response.Content, out int input))
+                        {
+                            if(input >= 2)
+                            {
+                                try
+                                {
+                                    await conn.OpenAsync();
+                                    cmd = new MySqlCommand($"UPDATE `setup` SET `min_players` = {input}  WHERE `tourney_id` = 1", conn);
+                                    await cmd.ExecuteNonQueryAsync();
+                                    await channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "Edit Succesfull!", Color = Color.Green, Description = "Successfully changed the min player amount. Returning to menu." });
+                                    await Task.Delay(1000);
+                                }
+                                catch (Exception e)
+                                {
+                                    await Program.Log(e.ToString(), "MinPlayer SQL", LogSeverity.Error);
+                                    await channel.SendMessageAsync("An error occured. Please contact an administrator.");
+                                }
+                            }
+                            else
+                            {
+                                await channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "Wrong Input!", Color = Color.Red, Description = "Please input a number higher than 1." });
+                                goto Min_Players;
+                            }
+                        }
+                        else
+                        {
+                            await channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "Wrong Input!", Color = Color.Red, Description = "Please input just a number." });
+                            goto Min_Players;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        await Program.Log(e.ToString(), "TryParse Convesion", LogSeverity.Warning);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                await Program.Log(e.ToString(), "MinPlayers SQL", LogSeverity.Error);
+            }
+            finally
+            {
+                await conn.CloseAsync();
+            }
             goto Restart;
+            #endregion
 
+            #region MaxPlayer
             MaxPlayer:
+            try
+            {
+                await conn.OpenAsync();
 
+                MySqlCommand cmd = new MySqlCommand("SELECT `max_players` FROM `setup` WHERE `tourney_id` = 1", conn);
+
+                int max_players = 0;
+
+                using (MySqlDataReader reader = (MySqlDataReader)await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        max_players = reader.GetInt16(0);
+                    }
+                }
+                await conn.CloseAsync();
+                await channel.SendMessageAsync("", false, new EmbedBuilder()
+                {
+                    Title = "Registration Max Players",
+                    Description = $"The current maximum amount of players is {max_players} (minimum maximum is 2)\n" +
+                    $"If the maximum is `-1` there is no maximum." +
+                    $"If you would like to alter it, please send `edit`. Send anything else to return to the main menu."
+                });
+                await Task.Delay(500);
+
+                response = await NextMessageAsync(new EnsureChannelCriterion(channel.Id), TimeSpan.FromMinutes(2));
+                if (response.Content.ToLower().StartsWith("edit"))
+                {
+                    Min_Players:
+                    await channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "Registration Max Players", Description = "What will be the maximum amount of players? (min 2, -1 for unlimited)" });
+                    await Task.Delay(500);
+
+                    response = await NextMessageAsync(new EnsureChannelCriterion(channel.Id), TimeSpan.FromMinutes(2));
+                    try
+                    {
+                        if (Int32.TryParse(response.Content, out int input))
+                        {
+                            if (input >= 2 || input == -1)
+                            {
+                                try
+                                {
+                                    await conn.OpenAsync();
+                                    cmd = new MySqlCommand($"UPDATE `setup` SET `min_players` = {input}  WHERE `tourney_id` = 1", conn);
+                                    await cmd.ExecuteNonQueryAsync();
+                                    await channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "Edit Succesfull!", Color = Color.Green, Description = "Successfully changed the max player amount. Returning to menu." });
+                                    await Task.Delay(1000);
+                                }
+                                catch (Exception e)
+                                {
+                                    await Program.Log(e.ToString(), "MaxPlayer SQL", LogSeverity.Error);
+                                    await channel.SendMessageAsync("An error occured. Please contact an administrator.");
+                                }
+                            }
+                            else
+                            {
+                                await channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "Wrong Input!", Color = Color.Red, Description = "Please input a number higher than 1 or -1." });
+                                goto Min_Players;
+                            }
+                        }
+                        else
+                        {
+                            await channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "Wrong Input!", Color = Color.Red, Description = "Please input just a number." });
+                            goto Min_Players;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        await Program.Log(e.ToString(), "TryParse Convesion", LogSeverity.Warning);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                await Program.Log(e.ToString(), "MaxPlayers SQL", LogSeverity.Error);
+            }
+            finally
+            {
+                await conn.CloseAsync();
+            }
             goto Restart;
+            #endregion
 
             ResetTourney:
 
