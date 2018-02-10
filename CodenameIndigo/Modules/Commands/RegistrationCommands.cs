@@ -14,7 +14,7 @@ namespace CodenameIndigo.Modules
 {
     public class RegistrationCommands : InteractiveBase
     {
-        [Command("register", RunMode = RunMode.Async), Alias(new[] { "signup" }), SignupPrecon()]
+        [Command("register", RunMode = RunMode.Async), Alias(new[] { "signup" }), InSignupPrecon(), UserNotRegisteredPrecon()]
         public async Task Register()
         {
             Player player = new Player() { Id = Context.User.Id, DiscordName = Context.User.Username + "#" + Context.User.Discriminator };

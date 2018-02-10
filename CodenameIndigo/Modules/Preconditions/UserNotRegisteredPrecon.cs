@@ -8,14 +8,9 @@ using System.Threading.Tasks;
 
 namespace CodenameIndigo.Modules.Preconditions
 {
-    class SignupPrecon : PreconditionAttribute
+    class UserNotRegisteredPrecon : PreconditionAttribute
     {
         public async override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider services)
-        {
-            return await GameAcceptingSignups() && await UserNotRegistered(context, context.User.Id) ? PreconditionResult.FromSuccess() : PreconditionResult.FromError($"Game is not Accepting Signups or {context.User.Username} is already signed up.");
-        }
-
-        private async Task<bool> UserNotRegistered(ICommandContext context, ulong uuid)
         {
             MySqlConnection conn = ConnectionTest.GetClosedConnection();
             bool isRegistered = false;
@@ -23,7 +18,7 @@ namespace CodenameIndigo.Modules.Preconditions
             {
                 await conn.OpenAsync();
 
-                string cmdString = $"SELECT COUNT(UUID) FROM users WHERE UUID = {uuid}";
+                string cmdString = $"SELECT COUNT(UUID) FROM users WHERE UUID = {context.User.Id}";
                 MySqlCommand cmd = new MySqlCommand(cmdString, conn);
 
                 using (MySqlDataReader reader = (MySqlDataReader)await cmd.ExecuteReaderAsync())
@@ -43,7 +38,7 @@ namespace CodenameIndigo.Modules.Preconditions
                 await conn.CloseAsync();
             }
 
-            if(!isRegistered)
+            if (!isRegistered)
             {
                 try
                 {
@@ -53,13 +48,7 @@ namespace CodenameIndigo.Modules.Preconditions
 
                 await (await context.User.GetOrCreateDMChannelAsync()).SendMessageAsync("You are already registered for the upcoming tournament.");
             }
-            return isRegistered;
-        }
-
-        private async Task<bool> GameAcceptingSignups()
-        {
-            await Program.Log("Returning success. - Not yet implemented", "SignupPrecon", Discord.LogSeverity.Debug);
-            return true;
+            return isRegistered ? PreconditionResult.FromSuccess() : null;
         }
     }
 }
