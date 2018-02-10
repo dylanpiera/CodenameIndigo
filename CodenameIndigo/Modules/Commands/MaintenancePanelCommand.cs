@@ -306,9 +306,51 @@ namespace CodenameIndigo.Modules.Commands
             goto Restart;
             #endregion
 
+            #region ResetTourney
             ResetTourney:
+            await channel.SendMessageAsync("", false, new EmbedBuilder()
+            {
+                Title = "**Tournament Reset**",
+                Color = Color.DarkRed,
+                Description = "Do you wish to reset the tournament? (yes/no)\n" +
+                "This option is **destructive** and will reset **all** values to their default, and remove **everyone** from the current list of players."
+            });
+            await Task.Delay(500);
+
+            response = await NextMessageAsync(new EnsureChannelCriterion(channel.Id), TimeSpan.FromMinutes(2));
+            if(response.Content.Equals("yes"))
+            {
+                try
+                {
+                    await conn.OpenAsync();
+
+                    MySqlCommand resetSettings = new MySqlCommand("UPDATE `setup` SET `end_date`=0,`min_players`=2,`max_players`=-1 WHERE `tourney_id` = 1", conn);
+                    MySqlCommand truncateUsers = new MySqlCommand("TRUNCATE TABLE users", conn);
+
+                    await resetSettings.ExecuteNonQueryAsync();
+                    await truncateUsers.ExecuteNonQueryAsync();
+
+                    await channel.SendMessageAsync("", false, new EmbedBuilder()
+                    {
+                        Title = "Tournament Reset Complete",
+                        Color = Color.DarkRed,
+                        Description = "Tournament has been reset."
+                    });
+                    await Task.Delay(500);
+                }
+                catch (Exception e)
+                {
+                    await Program.Log(e.ToString(), "ResetTourney SQL", LogSeverity.Error);
+                    await channel.SendMessageAsync("An error occured. Please contact an admin");
+                }
+                finally
+                {
+                    await conn.CloseAsync();
+                }
+            }
 
             goto Restart;
+            #endregion
         }
     }
 }
