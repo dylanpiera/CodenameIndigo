@@ -14,7 +14,7 @@ namespace CodenameIndigo.Modules.Commands
 {
     public class MaintenancePanelCommand : InteractiveBase
     {
-        [Command("modcp", RunMode = RunMode.Async), MaintenancePrecon()]
+        [Command("modcp", RunMode = RunMode.Async), MaintenancePrecon(), Ratelimit(1, 2, Measure.Minutes)]
         public async Task ModCP()
         {
             try
