@@ -34,8 +34,9 @@ namespace CodenameIndigo.Modules.Commands
                 $"2. Show/Change Min player amount\n" +
                 $"3. Show/Change max player amount\n" +
                 $"4. Remove a user from the Tournament.\n" +
-                $"5. Start New Tourney - **Warning Destructive action**\n" +
-                $"6. Close Menu";
+                $"5. Change Tourney - Current tourney: {tourney.Name}" +
+                $"6. Start New Tourney - **Warning Destructive action**\n" +
+                $"7. Close Menu";
             Restart:
             await channel.SendMessageAsync("", false, builder.Build());
 
@@ -54,8 +55,10 @@ namespace CodenameIndigo.Modules.Commands
                     case 4:
                         goto RemoveUser;
                     case 5:
-                        goto ResetTourney;
+                        goto ChangeTourney;
                     case 6:
+                        goto ResetTourney;
+                    case 7:
                         return;
                 }
             }
@@ -381,6 +384,75 @@ namespace CodenameIndigo.Modules.Commands
             }
 
 
+            goto Restart;
+            #endregion
+
+            #region ChangeTourney
+            ChangeTourney:
+            try
+            {
+                await conn.OpenAsync();
+
+                MySqlCommand cmd = new MySqlCommand("SELECT `tid`, `tournament` FROM `tournaments`", conn);
+                string tourneyData = "";
+                using (MySqlDataReader reader = (MySqlDataReader)await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        tourneyData += $"{reader.GetInt32(0)} - {reader.GetString(1)}\n";
+                    }
+                }
+
+                await channel.SendMessageAsync($"Tournament ID - Tournament Name:\n" +
+                    $"```{tourneyData}```\n" +
+                    $"Please send the ID of the tourney you wish to edit.");
+
+                response = await NextMessageAsync(new EnsureChannelCriterion(channel.Id), TimeSpan.FromMinutes(2));
+                if (int.TryParse(response.Content, out int id) && id != tourney.ID)
+                {
+                    Tourney newTourney = await DatabaseHelper.GetTourneyByIDAsync(id);
+                    if (!string.IsNullOrEmpty(newTourney.Name))
+                    {
+                        tourney = newTourney;
+                        await channel.SendMessageAsync("", false, new EmbedBuilder()
+                        {
+                            Title = "Success!",
+                            Color = Color.Green,
+                            Description = $"Successfully switched to tournament #{tourney.ID} - {tourney.Name}\n" +
+                            $"Returning to main menu."
+                        });
+                        await Task.Delay(500);
+                    }
+                    else
+                    {
+                        await channel.SendMessageAsync("", false, new EmbedBuilder()
+                        {
+                            Title = "Failed.",
+                            Color = Color.Green,
+                            Description = $"Failed to switch. Returning to main menu."
+                        });
+                        await Task.Delay(500);
+                    }
+                }
+                else
+                {
+                    await channel.SendMessageAsync("", false, new EmbedBuilder()
+                    {
+                        Title = "Invalid Input.",
+                        Color = Color.Green,
+                        Description = $"Invalid Input. Returning to main menu."
+                    });
+                    await Task.Delay(500);
+                }
+            }
+            catch (Exception e)
+            {
+                await Program.Log(e.ToString(), "ChangeTourney => SQL", LogSeverity.Error);
+            }
+            finally
+            {
+                await conn.CloseAsync();
+            }
             goto Restart;
             #endregion
 
