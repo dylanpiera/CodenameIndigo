@@ -34,7 +34,7 @@ namespace CodenameIndigo.Modules.Commands
                 if (string.IsNullOrEmpty(team))
                     await Context.Channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "Player not Found", Description = "It appears that user isn't registered for the tournament.", Color = Color.Red });
                 else
-                    await Context.Channel.SendMessageAsync("", false, new EmbedBuilder() { Title = $"{mention.Username}'s Team", Description = team });
+                    await Context.Channel.SendMessageAsync($"**{mention.Username}'s Team**\n```{team}```");
             }
             catch (Exception e)
             {
