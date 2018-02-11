@@ -20,7 +20,7 @@ namespace CodenameIndigo.Modules.Commands
             {
                 await conn.OpenAsync();
 
-                string cmdString = $"SELECT Team FROM users WHERE UUID = {mention.Id}";
+                string cmdString = $"SELECT team FROM participants WHERE tid = 1 AND uid = {mention.Id}";
                 MySqlCommand cmd = new MySqlCommand(cmdString, conn);
 
                 string team = "";
@@ -28,7 +28,7 @@ namespace CodenameIndigo.Modules.Commands
                 {
                     while (await reader.ReadAsync())
                     {
-                        team = reader.GetString(reader.GetOrdinal("Team"));
+                        team = reader.GetString(reader.GetOrdinal("team"));
                     }
                 }
                 if (string.IsNullOrEmpty(team))

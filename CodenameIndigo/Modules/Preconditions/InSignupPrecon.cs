@@ -18,7 +18,7 @@ namespace CodenameIndigo.Modules.Preconditions
             {
                 await conn.OpenAsync();
 
-                MySqlCommand cmd = new MySqlCommand("SELECT `end_date` FROM `setup` WHERE `tourney_id` = 1", conn);
+                MySqlCommand cmd = new MySqlCommand("SELECT `regend` FROM `tournaments` WHERE `tid` = 1", conn);
 
 
 

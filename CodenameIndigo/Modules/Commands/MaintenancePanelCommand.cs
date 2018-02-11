@@ -67,7 +67,7 @@ namespace CodenameIndigo.Modules.Commands
             {
                 await conn.OpenAsync();
 
-                MySqlCommand cmd = new MySqlCommand("SELECT `end_date` FROM `setup` WHERE `tourney_id` = 1", conn);
+                MySqlCommand cmd = new MySqlCommand("SELECT `regend` FROM `tournaments` WHERE `tid` = 1", conn);
 
                 long UNIXTime = 0;
 
@@ -110,7 +110,7 @@ namespace CodenameIndigo.Modules.Commands
                         {
                             await conn.OpenAsync();
 
-                            cmd = new MySqlCommand($"UPDATE `setup` SET `end_date` = {date.ToUnixTimeSeconds()}  WHERE `tourney_id` = 1", conn);
+                            cmd = new MySqlCommand($"UPDATE `tournaments` SET `regend` = {date.ToUnixTimeSeconds()}  WHERE `tid` = 1", conn);
                             await cmd.ExecuteNonQueryAsync();
                             await channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "Edit Succesfull!", Color = Color.Green, Description = "Successfully changed the date. Returning to menu." });
                             await Task.Delay(1000);
@@ -145,7 +145,7 @@ namespace CodenameIndigo.Modules.Commands
             {
                 await conn.OpenAsync();
 
-                MySqlCommand cmd = new MySqlCommand("SELECT `min_players` FROM `setup` WHERE `tourney_id` = 1", conn);
+                MySqlCommand cmd = new MySqlCommand("SELECT `minplayers` FROM `tournaments` WHERE `tid` = 1", conn);
 
                 int min_players = 0;
 
@@ -182,7 +182,7 @@ namespace CodenameIndigo.Modules.Commands
                                 try
                                 {
                                     await conn.OpenAsync();
-                                    cmd = new MySqlCommand($"UPDATE `setup` SET `min_players` = {input}  WHERE `tourney_id` = 1", conn);
+                                    cmd = new MySqlCommand($"UPDATE `tournaments` SET `minplayers` = {input}  WHERE `tid` = 1", conn);
                                     await cmd.ExecuteNonQueryAsync();
                                     await channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "Edit Succesfull!", Color = Color.Green, Description = "Successfully changed the min player amount. Returning to menu." });
                                     await Task.Delay(1000);
@@ -228,7 +228,7 @@ namespace CodenameIndigo.Modules.Commands
             {
                 await conn.OpenAsync();
 
-                MySqlCommand cmd = new MySqlCommand("SELECT `max_players` FROM `setup` WHERE `tourney_id` = 1", conn);
+                MySqlCommand cmd = new MySqlCommand("SELECT `maxplayers` FROM `tournaments` WHERE `tid` = 1", conn);
 
                 int max_players = 0;
 
@@ -244,7 +244,6 @@ namespace CodenameIndigo.Modules.Commands
                 {
                     Title = "Registration Max Players",
                     Description = $"The current maximum amount of players is {max_players} (minimum maximum is 2)\n" +
-                    $"If the maximum is `-1` there is no maximum." +
                     $"If you would like to alter it, please send `edit`. Send anything else to return to the main menu."
                 });
                 await Task.Delay(500);
@@ -253,7 +252,7 @@ namespace CodenameIndigo.Modules.Commands
                 if (response.Content.ToLower().StartsWith("edit"))
                 {
                     Min_Players:
-                    await channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "Registration Max Players", Description = "What will be the maximum amount of players? (min 2, -1 for unlimited)" });
+                    await channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "Registration Max Players", Description = "What will be the maximum amount of players? (min 2)" });
                     await Task.Delay(500);
 
                     response = await NextMessageAsync(new EnsureChannelCriterion(channel.Id), TimeSpan.FromMinutes(2));
@@ -261,12 +260,12 @@ namespace CodenameIndigo.Modules.Commands
                     {
                         if (Int32.TryParse(response.Content, out int input))
                         {
-                            if (input >= 2 || input == -1)
+                            if (input >= 2)
                             {
                                 try
                                 {
                                     await conn.OpenAsync();
-                                    cmd = new MySqlCommand($"UPDATE `setup` SET `min_players` = {input}  WHERE `tourney_id` = 1", conn);
+                                    cmd = new MySqlCommand($"UPDATE `tournaments` SET `maxplayers` = {input}  WHERE `tid` = 1", conn);
                                     await cmd.ExecuteNonQueryAsync();
                                     await channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "Edit Succesfull!", Color = Color.Green, Description = "Successfully changed the max player amount. Returning to menu." });
                                     await Task.Delay(1000);
@@ -279,7 +278,7 @@ namespace CodenameIndigo.Modules.Commands
                             }
                             else
                             {
-                                await channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "Wrong Input!", Color = Color.Red, Description = "Please input a number higher than 1 or -1." });
+                                await channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "Wrong Input!", Color = Color.Red, Description = "Please input a number higher than 1." });
                                 goto Min_Players;
                             }
                         }

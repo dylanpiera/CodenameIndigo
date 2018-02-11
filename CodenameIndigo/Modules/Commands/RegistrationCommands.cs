@@ -104,7 +104,7 @@ namespace CodenameIndigo.Modules
             {
                 await conn.OpenAsync();
 
-                string cmdString = $"INSERT INTO users (UUID, DiscordUsername, ShowdownUsername, Team) VALUES ('{player.Id}', '{player.DiscordName}', @ShowdownUsername, @Team)";
+                string cmdString = $"INSERT INTO participants (tid, uid, discordusername, showdownusername, team) VALUES (1, '{player.Id}', '{player.DiscordName}', @ShowdownUsername, @Team)";
                 MySqlCommand cmd = new MySqlCommand(cmdString, conn);
                 cmd.Parameters.Add("@ShowdownUsername", MySqlDbType.VarChar).Value = player.ShowdownName;
                 cmd.Parameters.Add("@Team", MySqlDbType.VarChar).Value = player.Team;
