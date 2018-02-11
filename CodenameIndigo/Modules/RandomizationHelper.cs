@@ -8,7 +8,7 @@ namespace CodenameIndigo.Modules
 {
     public static class RandomizationHelper
     {
-        public static async Task<List<Player>> GenerateRandomBracketsAsync()
+        public static async Task<List<Player>> GenerateRandomBracketsAsync(int tid = 1, bool rand = true)
         {
             MySqlConnection conn = ConnectionTest.GetClosedConnection();
             List<Player> participants = new List<Player>();
@@ -17,7 +17,9 @@ namespace CodenameIndigo.Modules
             {
                 await conn.OpenAsync();
 
-                MySqlCommand cmd = new MySqlCommand("SELECT * FROM `participants` WHERE `tid` = 1 ORDER BY RAND()", conn);
+                MySqlCommand cmd = new MySqlCommand("SELECT * FROM `participants` WHERE `tid` = " + tid, conn);
+                if (rand)
+                    cmd.CommandText += " ORDER BY RAND()";
 
                 using (MySqlDataReader reader = (MySqlDataReader) await cmd.ExecuteReaderAsync())
                 {
