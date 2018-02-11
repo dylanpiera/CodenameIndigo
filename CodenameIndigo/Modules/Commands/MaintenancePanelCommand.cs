@@ -33,8 +33,9 @@ namespace CodenameIndigo.Modules.Commands
                 $"1. Show/Change Signup Date\n" +
                 $"2. Show/Change Min player amount\n" +
                 $"3. Show/Change max player amount\n" +
-                $"4. Start New Tourney - **Warning Destructive action**\n" +
-                $"5. Close Menu";
+                $"4. Remove a user from the Tournament.\n" +
+                $"5. Start New Tourney - **Warning Destructive action**\n" +
+                $"6. Close Menu";
             Restart:
             await channel.SendMessageAsync("", false, builder.Build());
             await Task.Delay(500);
@@ -52,8 +53,10 @@ namespace CodenameIndigo.Modules.Commands
                     case 3:
                         goto MaxPlayer;
                     case 4:
-                        goto ResetTourney;
+                        goto RemoveUser;
                     case 5:
+                        goto ResetTourney;
+                    case 6:
                         return;
                 }
             }
@@ -303,6 +306,90 @@ namespace CodenameIndigo.Modules.Commands
             {
                 await conn.CloseAsync();
             }
+            goto Restart;
+            #endregion
+
+            #region RemoveUser
+            RemoveUser:
+            await channel.SendMessageAsync("", false, new EmbedBuilder()
+            {
+                Title = "Remove User from Tournament",
+                Color = Color.DarkOrange,
+                Description = "Please provide the Discord ID or Discord Username (with discriminator) of the user you're trying to kick."
+            });
+            await Task.Delay(500);
+            response = await NextMessageAsync(new EnsureChannelCriterion(channel.Id), TimeSpan.FromMinutes(2));
+
+            try
+            {
+                await conn.OpenAsync();
+
+                MySqlCommand cmd = new MySqlCommand("SELECT * FROM `participants` WHERE `uid` = @id OR `discordusername` = @name", conn);
+
+                cmd.Parameters.Add("@id", MySqlDbType.Int64).Value = long.TryParse(response.Content, out long value) ? value : 000000000000000000;
+                cmd.Parameters.Add("@name", MySqlDbType.VarChar).Value = response.Content;
+
+                Player player = new Player();
+                using (MySqlDataReader reader = (MySqlDataReader)await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        player.Id = reader.GetUInt64(2);
+                        player.DiscordName = reader.GetString(3);
+                        player.ShowdownName = reader.GetString(4);
+                    }
+                }
+                if (string.IsNullOrEmpty(player.DiscordName))
+                {
+                    await channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "User not Found", Color = Color.Red, Description = "User not found. Returning to main menu." });
+                    await Task.Delay(500);
+                    goto Restart;
+                }
+                await conn.CloseAsync();
+                await channel.SendMessageAsync("", false, new EmbedBuilder()
+                {
+                    Title = "Remove User",
+                    Color = Color.DarkOrange,
+                    Description = $"Is this the user you're looking for?\n" +
+                    $"**Discord ID:** {player.Id}\n" +
+                    $"**Discord Name:** {player.DiscordName}\n" +
+                    $"**Showdown Name:** {player.ShowdownName}\n" +
+                    $"Please respond with yes/no"
+                });
+                await Task.Delay(500);
+                response = await NextMessageAsync(new EnsureChannelCriterion(channel.Id), TimeSpan.FromMinutes(2));
+                if (response.Content.ToLower().Equals("yes"))
+                {
+                    try
+                    {
+                        await conn.OpenAsync();
+                        cmd = new MySqlCommand("DELETE FROM `participants` WHERE `uid` = " + player.Id, conn);
+                        await cmd.ExecuteNonQueryAsync();
+                        await channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "Success!", Color = Color.LightOrange, Description = $"Successfully kicked {player.DiscordName} from the game.\nReturning to main menu." });
+                        await Task.Delay(500);
+                    }
+                    catch (Exception e)
+                    {
+                        await Program.Log(e.ToString(), "RemoveUser => Deletion", LogSeverity.Error);
+                    }
+                }
+                else
+                {
+                    await channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "Cancelled.", Color = Color.Red, Description = "Process Cancelled. Returning to main menu." });
+                    await Task.Delay(500);
+                    goto Restart;
+                }
+            }
+            catch (Exception e)
+            {
+                await Program.Log(e.ToString(), "RemoveUser => Lookup", LogSeverity.Error);
+            }
+            finally
+            {
+                await conn.CloseAsync();
+            }
+
+
             goto Restart;
             #endregion
 
