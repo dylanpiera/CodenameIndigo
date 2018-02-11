@@ -15,12 +15,12 @@ namespace CodenameIndigo.Modules.Commands
         [Command("lookup", RunMode = RunMode.Async), NotInSignupPrecon(Group = "a"), MaintenancePrecon(Group = "a")]
         public async Task LookupCommand(IUser mention)
         {
-            MySqlConnection conn = ConnectionTest.GetClosedConnection();
+            MySqlConnection conn = DatabaseHelper.GetClosedConnection();
             try
             {
                 await conn.OpenAsync();
 
-                string cmdString = $"SELECT team FROM participants WHERE tid = 1 AND uid = {mention.Id}";
+                string cmdString = $"SELECT team FROM participants WHERE tid = {(await DatabaseHelper.GetLatestTourneyAsync()).ID} AND uid = {mention.Id}";
                 MySqlCommand cmd = new MySqlCommand(cmdString, conn);
 
                 string team = "";

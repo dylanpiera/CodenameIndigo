@@ -12,13 +12,13 @@ namespace CodenameIndigo.Modules.Preconditions
     {
         public async override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider services)
         {
-            MySqlConnection conn = ConnectionTest.GetClosedConnection();
+            MySqlConnection conn = DatabaseHelper.GetClosedConnection();
             bool isRegistered = false;
             try
             {
                 await conn.OpenAsync();
 
-                string cmdString = $"SELECT COUNT(uid) FROM participants WHERE uid = {context.User.Id}";
+                string cmdString = $"SELECT COUNT(uid) FROM participants WHERE uid = {context.User.Id} AND `tid` = " + (await DatabaseHelper.GetLatestTourneyAsync()).ID;
                 MySqlCommand cmd = new MySqlCommand(cmdString, conn);
 
                 using (MySqlDataReader reader = (MySqlDataReader)await cmd.ExecuteReaderAsync())
