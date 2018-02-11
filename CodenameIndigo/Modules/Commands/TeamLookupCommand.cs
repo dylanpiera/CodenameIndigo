@@ -15,7 +15,7 @@ namespace CodenameIndigo.Modules.Commands
         [Command("lookup", RunMode = RunMode.Async), NotInSignupPrecon(Group = "a"), MaintenancePrecon(Group = "a")]
         public async Task LookupCommand(IUser mention)
         {
-            MySqlConnection conn = ConnectionTest.GetClosedConnection();
+            MySqlConnection conn = DatabaseHelper.GetClosedConnection();
             try
             {
                 await conn.OpenAsync();

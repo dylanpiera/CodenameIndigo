@@ -25,7 +25,7 @@ namespace CodenameIndigo.Modules.Commands
             catch { }
 
             IDMChannel channel = await Context.User.GetOrCreateDMChannelAsync();
-            MySqlConnection conn = ConnectionTest.GetClosedConnection();
+            MySqlConnection conn = DatabaseHelper.GetClosedConnection();
 
             EmbedBuilder builder = new EmbedBuilder() { Title = "Mod CP", Color = Color.DarkGrey, Footer = new EmbedFooterBuilder() { Text = "If you do not answer within 2 minutes you will need to use `?modcp` again." } };
             builder.Description = $"Hey there {Context.User.Username}! Please choose one of these options by sending their number to me.\n" +

@@ -12,7 +12,7 @@ namespace CodenameIndigo.Modules.Preconditions
     {
         public async override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider services)
         {
-            MySqlConnection conn = ConnectionTest.GetClosedConnection();
+            MySqlConnection conn = DatabaseHelper.GetClosedConnection();
             bool isRegistered = false;
             try
             {

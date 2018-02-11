@@ -18,7 +18,7 @@ namespace CodenameIndigo.Modules
         [Command("conntest")]
         public async Task ConnTest()
         {
-            MySqlConnection conn = GetClosedConnection();
+            MySqlConnection conn = DatabaseHelper.GetClosedConnection();
             try
             {
                 await conn.OpenAsync();
@@ -33,13 +33,6 @@ namespace CodenameIndigo.Modules
             {
                 await conn.CloseAsync();
             }
-        }
-        
-        public static MySqlConnection GetClosedConnection()
-        {
-            string connStr = $"Server={Sneaky.DatabaseUrl};Uid={Sneaky.User};Database=bulbaleague;port=3306;Password={Sneaky.Password};SslMode=none;CharSet=utf8mb4";
-            MySqlConnection conn = new MySqlConnection(connStr) { };
-            return conn;
         }
     }
 }

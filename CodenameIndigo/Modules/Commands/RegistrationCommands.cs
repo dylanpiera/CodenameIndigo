@@ -106,7 +106,7 @@ namespace CodenameIndigo.Modules
 
         public async Task<bool> AddPlayerToDatabase(Player player)
         {
-            MySqlConnection conn = ConnectionTest.GetClosedConnection();
+            MySqlConnection conn = DatabaseHelper.GetClosedConnection();
             bool ok;
             try
             {
