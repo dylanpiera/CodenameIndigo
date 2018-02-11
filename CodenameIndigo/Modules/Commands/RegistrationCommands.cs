@@ -27,13 +27,13 @@ namespace CodenameIndigo.Modules
             catch { }
 
             IDMChannel channel = await Context.User.GetOrCreateDMChannelAsync();
-
+            Tourney tourney = await DatabaseHelper.GetLatestTourneyAsync();
             Restart:
             await channel.SendMessageAsync("", false, new EmbedBuilder()
             {
                 Color = Color.Blue,
                 Title = "☆ BulbaLeague Signups ☆",
-                Description = $"Welcome {Context.User.Username}! you are currently signing up for the [TOURNEY_NAME] tournament. The tournament will start [TOURNAMENT_START_TIME]\n\n" +
+                Description = $"Welcome {Context.User.Username}! you are currently signing up for the {tourney.Name}. The tournament will start {DateTimeOffset.FromUnixTimeSeconds(tourney.Regend).ToString("dd-MM-yyyy")}\n\n" +
                 $"Please provide your Showdown Username?",
                 Footer = new EmbedFooterBuilder() { Text = "If you do not answer within 2 minutes you will need to use `?register` again." }
             });
@@ -95,7 +95,7 @@ namespace CodenameIndigo.Modules
                     Description = $"Thanks for signing up {Context.User.Username}!" //add more info here
                 });
 
-                if (!(await AddPlayerToDatabase(player)))
+                if (!(await AddPlayerToDatabase(player, tourney)))
                     await channel.SendMessageAsync("An error occured. Please contact a moderator.");
             }
             else if (response.Content.ToLower() == "no")
@@ -104,7 +104,7 @@ namespace CodenameIndigo.Modules
                 goto Confirm;
         }
 
-        public async Task<bool> AddPlayerToDatabase(Player player)
+        public async Task<bool> AddPlayerToDatabase(Player player, Tourney tourney)
         {
             MySqlConnection conn = DatabaseHelper.GetClosedConnection();
             bool ok;
@@ -112,7 +112,7 @@ namespace CodenameIndigo.Modules
             {
                 await conn.OpenAsync();
 
-                string cmdString = $"INSERT INTO participants (tid, uid, discordusername, showdownusername, team) VALUES (1, '{player.Id}', '{player.DiscordName}', @ShowdownUsername, @Team)";
+                string cmdString = $"INSERT INTO participants (tid, uid, discordusername, showdownusername, team) VALUES ({tourney.ID}, '{player.Id}', '{player.DiscordName}', @ShowdownUsername, @Team)";
                 MySqlCommand cmd = new MySqlCommand(cmdString, conn);
                 cmd.Parameters.Add("@ShowdownUsername", MySqlDbType.VarChar).Value = player.ShowdownName;
                 cmd.Parameters.Add("@Team", MySqlDbType.VarChar).Value = player.Team;

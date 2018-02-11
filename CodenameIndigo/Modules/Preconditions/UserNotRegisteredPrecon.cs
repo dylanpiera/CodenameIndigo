@@ -18,7 +18,7 @@ namespace CodenameIndigo.Modules.Preconditions
             {
                 await conn.OpenAsync();
 
-                string cmdString = $"SELECT COUNT(uid) FROM participants WHERE uid = {context.User.Id}";
+                string cmdString = $"SELECT COUNT(uid) FROM participants WHERE uid = {context.User.Id} AND `tid` = " + (await DatabaseHelper.GetLatestTourneyAsync()).ID;
                 MySqlCommand cmd = new MySqlCommand(cmdString, conn);
 
                 using (MySqlDataReader reader = (MySqlDataReader)await cmd.ExecuteReaderAsync())

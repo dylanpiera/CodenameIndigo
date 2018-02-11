@@ -18,7 +18,7 @@ namespace CodenameIndigo.Modules.Preconditions
             {
                 await conn.OpenAsync();
 
-                MySqlCommand cmd = new MySqlCommand("SELECT `regend` FROM `tournaments` WHERE `tid` = 1", conn);
+                MySqlCommand cmd = new MySqlCommand("SELECT `regend` FROM `tournaments` WHERE `tid` = " + (await DatabaseHelper.GetLatestTourneyAsync()).ID, conn);
 
                 using (MySqlDataReader reader = (MySqlDataReader)await cmd.ExecuteReaderAsync())
                 {

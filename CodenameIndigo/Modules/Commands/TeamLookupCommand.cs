@@ -20,7 +20,7 @@ namespace CodenameIndigo.Modules.Commands
             {
                 await conn.OpenAsync();
 
-                string cmdString = $"SELECT team FROM participants WHERE tid = 1 AND uid = {mention.Id}";
+                string cmdString = $"SELECT team FROM participants WHERE tid = {(await DatabaseHelper.GetLatestTourneyAsync()).ID} AND uid = {mention.Id}";
                 MySqlCommand cmd = new MySqlCommand(cmdString, conn);
 
                 string team = "";
