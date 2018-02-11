@@ -12,7 +12,7 @@ namespace CodenameIndigo.Modules.Commands
 {
     public class TeamLookupCommand : InteractiveBase
     {
-        [Command("lookup", RunMode = RunMode.Async)]
+        [Command("lookup", RunMode = RunMode.Async), NotInSignupPrecon(Group = "a"), MaintenancePrecon(Group = "a")]
         public async Task LookupCommand(IUser mention)
         {
             MySqlConnection conn = ConnectionTest.GetClosedConnection();
