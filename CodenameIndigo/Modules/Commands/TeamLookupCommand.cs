@@ -12,7 +12,7 @@ namespace CodenameIndigo.Modules.Commands
 {
     public class TeamLookupCommand : InteractiveBase
     {
-        [Command("lookup", RunMode = RunMode.Async)]
+        [Command("lookup", RunMode = RunMode.Async), NotInSignupPrecon(Group = "a"), MaintenancePrecon(Group = "a")]
         public async Task LookupCommand(IUser mention)
         {
             MySqlConnection conn = ConnectionTest.GetClosedConnection();
@@ -34,7 +34,7 @@ namespace CodenameIndigo.Modules.Commands
                 if (string.IsNullOrEmpty(team))
                     await Context.Channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "Player not Found", Description = "It appears that user isn't registered for the tournament.", Color = Color.Red });
                 else
-                    await Context.Channel.SendMessageAsync("", false, new EmbedBuilder() { Title = $"{mention.Username}'s Team", Description = team });
+                    await Context.Channel.SendMessageAsync($"**{mention.Username}'s Team**\n```{team}```");
             }
             catch (Exception e)
             {

@@ -70,11 +70,19 @@ namespace CodenameIndigo.Modules
                 Title = "☆ BulbaLeague Signups ☆",
                 Description = $"Is this data correct?\n" +
                 $"**Discord Username:** {player.DiscordName}\n" +
-                $"**Showdown Username:** {player.ShowdownName}\n" +
-                $"**Team:** ```{player.Team}```\n" +
-                $"Please respond with Yes or No",
+                $"**Showdown Username:** {player.ShowdownName}\n**Team:**"
+            });
+            await Task.Delay(500);
+            await channel.SendMessageAsync($"```{player.Team}```");
+            await Task.Delay(500);
+            await channel.SendMessageAsync("", false, new EmbedBuilder()
+            {
+                Color = Color.Blue,
+                Title = "☆ BulbaLeague Signups ☆",
+                Description = $"Please respond with Yes or No",
                 Footer = new EmbedFooterBuilder() { Text = "If you do not answer within 2 minutes you will need to use `?register` again." }
             });
+            await Task.Delay(500);
             Confirm:
             response = await NextMessageAsync(new EnsureChannelCriterion(channel.Id), TimeSpan.FromMinutes(2));
 
