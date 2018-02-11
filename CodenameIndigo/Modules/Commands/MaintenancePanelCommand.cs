@@ -38,7 +38,6 @@ namespace CodenameIndigo.Modules.Commands
                 $"6. Close Menu";
             Restart:
             await channel.SendMessageAsync("", false, builder.Build());
-            await Task.Delay(500);
 
             SocketMessage response = await NextMessageAsync(new EnsureChannelCriterion(channel.Id), TimeSpan.FromMinutes(2));
 
@@ -91,14 +90,12 @@ namespace CodenameIndigo.Modules.Commands
                     Description = $"The current registration end date is set to: {offset.ToString("dd-MM-yyyy")}\n" +
                     $"If you would like to alter it, please send `edit`. Send anything else to return to the main menu."
                 });
-                await Task.Delay(500);
 
                 response = await NextMessageAsync(new EnsureChannelCriterion(channel.Id), TimeSpan.FromMinutes(2));
                 if (response.Content.ToLower().StartsWith("edit"))
                 {
                     Date_Time:
                     await channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "Registration End Date", Description = "Please provide the end date in the following format: DD-MM-YYYY" });
-                    await Task.Delay(500);
 
                     response = await NextMessageAsync(new EnsureChannelCriterion(channel.Id), TimeSpan.FromMinutes(2));
                     try
@@ -167,14 +164,12 @@ namespace CodenameIndigo.Modules.Commands
                     Description = $"The current minimum amount of players is {min_players} (minimum minimum is 2)\n" +
                     $"If you would like to alter it, please send `edit`. Send anything else to return to the main menu."
                 });
-                await Task.Delay(500);
 
                 response = await NextMessageAsync(new EnsureChannelCriterion(channel.Id), TimeSpan.FromMinutes(2));
                 if (response.Content.ToLower().StartsWith("edit"))
                 {
                     Min_Players:
                     await channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "Registration Min Players", Description = "What will be the minimum amount of players? (min 2)" });
-                    await Task.Delay(500);
 
                     response = await NextMessageAsync(new EnsureChannelCriterion(channel.Id), TimeSpan.FromMinutes(2));
                     try
@@ -250,14 +245,12 @@ namespace CodenameIndigo.Modules.Commands
                     Description = $"The current maximum amount of players is {max_players} (minimum maximum is 2)\n" +
                     $"If you would like to alter it, please send `edit`. Send anything else to return to the main menu."
                 });
-                await Task.Delay(500);
 
                 response = await NextMessageAsync(new EnsureChannelCriterion(channel.Id), TimeSpan.FromMinutes(2));
                 if (response.Content.ToLower().StartsWith("edit"))
                 {
                     Min_Players:
                     await channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "Registration Max Players", Description = "What will be the maximum amount of players? (min 2)" });
-                    await Task.Delay(500);
 
                     response = await NextMessageAsync(new EnsureChannelCriterion(channel.Id), TimeSpan.FromMinutes(2));
                     try
@@ -317,7 +310,6 @@ namespace CodenameIndigo.Modules.Commands
                 Color = Color.DarkOrange,
                 Description = "Please provide the Discord ID or Discord Username (with discriminator) of the user you're trying to kick."
             });
-            await Task.Delay(500);
             response = await NextMessageAsync(new EnsureChannelCriterion(channel.Id), TimeSpan.FromMinutes(2));
 
             try
@@ -356,7 +348,6 @@ namespace CodenameIndigo.Modules.Commands
                     $"**Showdown Name:** {player.ShowdownName}\n" +
                     $"Please respond with yes/no"
                 });
-                await Task.Delay(500);
                 response = await NextMessageAsync(new EnsureChannelCriterion(channel.Id), TimeSpan.FromMinutes(2));
                 if (response.Content.ToLower().Equals("yes"))
                 {
@@ -402,7 +393,6 @@ namespace CodenameIndigo.Modules.Commands
                 Description = "Do you wish to reset the tournament? (yes/no)\n" +
                 "This option is **destructive** and will reset **all** values to their default, and remove **everyone** from the current list of players."
             });
-            await Task.Delay(500);
 
             response = await NextMessageAsync(new EnsureChannelCriterion(channel.Id), TimeSpan.FromMinutes(2));
             if (response.Content.Equals("yes"))

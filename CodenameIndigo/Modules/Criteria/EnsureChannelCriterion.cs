@@ -15,7 +15,7 @@ namespace CodenameIndigo.Modules.Criteria
 
         public Task<bool> JudgeAsync(SocketCommandContext sourceContext, SocketMessage parameter)
         {
-            bool ok = _id == parameter.Channel.Id;
+            bool ok = _id == parameter.Channel.Id && parameter.Author.Id != sourceContext.Client.CurrentUser.Id;
             return Task.FromResult(ok);
         }
     }
