@@ -34,8 +34,8 @@ namespace CodenameIndigo.Modules.Commands
                 $"2. Show/Change Min player amount\n" +
                 $"3. Show/Change max player amount\n" +
                 $"4. Remove a user from the Tournament.\n" +
-                $"5. Change Tourney - Current tourney: {tourney.Name}" +
-                $"6. Start New Tourney - **Warning Destructive action**\n" +
+                $"5. Change Tourney - Current tourney: {tourney.Name}\n" +
+                $"6. Start New Tourney\n" +
                 $"7. Close Menu";
             Restart:
             await channel.SendMessageAsync("", false, builder.Build());
@@ -460,30 +460,30 @@ namespace CodenameIndigo.Modules.Commands
             ResetTourney:
             await channel.SendMessageAsync("", false, new EmbedBuilder()
             {
-                Title = "**Tournament Reset**",
+                Title = "**New Tourney**",
                 Color = Color.DarkRed,
-                Description = "Do you wish to reset the tournament? (yes/no)\n" +
-                "This option is **destructive** and will reset **all** values to their default, and remove **everyone** from the current list of players."
+                Description = "A new tournament will be created. After creation you will automatically switch to it and you can edit it after that.\n" +
+                "To continue type the name of the to-be-created tournament. Otherwise type `exit`"
             });
 
             response = await NextMessageAsync(new EnsureChannelCriterion(channel.Id), TimeSpan.FromMinutes(2));
-            if (response.Content.Equals("yes"))
+            if (!response.Content.Equals("exit"))
             {
                 try
                 {
                     await conn.OpenAsync();
 
-                    MySqlCommand resetSettings = new MySqlCommand("UPDATE `setup` SET `end_date`=0,`min_players`=2,`max_players`=-1 WHERE `tourney_id` = 1", conn);
-                    MySqlCommand truncateUsers = new MySqlCommand("TRUNCATE TABLE users", conn);
+                    MySqlCommand newTourney = new MySqlCommand($"INSERT INTO `tournaments`(`tournament`, `regstart`, `regend`) VALUES (@tourneyName, \"{DateTimeOffset.Now.ToUnixTimeSeconds()}\", \"{DateTimeOffset.Now.ToUnixTimeSeconds()}\")", conn);
+                    newTourney.Parameters.Add("@tourneyName", MySqlDbType.VarChar).Value = response.Content;
+                    await newTourney.ExecuteNonQueryAsync();
 
-                    await resetSettings.ExecuteNonQueryAsync();
-                    await truncateUsers.ExecuteNonQueryAsync();
-
+                    tourney = await DatabaseHelper.GetLatestTourneyAsync();
+                    
                     await channel.SendMessageAsync("", false, new EmbedBuilder()
                     {
-                        Title = "Tournament Reset Complete",
+                        Title = "Tournament Creation Complete",
                         Color = Color.DarkRed,
-                        Description = "Tournament has been reset."
+                        Description = $"Tournament {tourney.Name} has been created and switched to."
                     });
                     await Task.Delay(500);
                 }
