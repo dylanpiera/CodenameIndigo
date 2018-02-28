@@ -16,6 +16,42 @@ namespace CodenameIndigo.Modules
             return conn;
         }
 
+        public static async Task<Tourney> GetTourneyByIDAsync(int id)
+        {
+            Tourney tourney = new Tourney();
+            
+            MySqlConnection conn = DatabaseHelper.GetClosedConnection();
+            try
+            {
+                await conn.OpenAsync();
+
+                MySqlCommand cmd = new MySqlCommand("SELECT * FROM `tournaments` WHERE `tid` = " + id, conn);
+
+                using (MySqlDataReader reader = (MySqlDataReader)await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        tourney.ID = reader.GetInt32(0);
+                        tourney.Name = reader.GetString(1);
+                        tourney.Regstart = reader.GetInt32(2);
+                        tourney.Regend = reader.GetInt32(3);
+                        tourney.MinPlayers = reader.GetInt32(13);
+                        tourney.MaxPlayers = reader.GetInt32(14);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                await Program.Log(e.ToString(), "GetTourneyByID => SQL", LogSeverity.Error);
+            }
+            finally
+            {
+                await conn.CloseAsync();
+            }
+
+            return tourney;
+        }
+
         public static async Task<Tourney> GetLatestTourneyAsync()
         {
             Tourney tourney = new Tourney();
@@ -31,12 +67,12 @@ namespace CodenameIndigo.Modules
                 {
                     while(await reader.ReadAsync())
                     {
-                        tourney.ID = reader.GetInt32(0);
-                        tourney.Name = reader.GetString(1);
-                        tourney.Regstart = reader.GetInt32(2);
-                        tourney.Regend = reader.GetInt32(3);
-                        tourney.MinPlayers = reader.GetInt32(13);
-                        tourney.MaxPlayers = reader.GetInt32(14);
+                        tourney.ID = reader.GetInt32("tid");
+                        tourney.Name = reader.GetString("tournament");
+                        tourney.Regstart = reader.GetInt32("regstart");
+                        tourney.Regend = reader.GetInt32("regend");
+                        tourney.MinPlayers = reader.GetInt32("minplayers");
+                        tourney.MaxPlayers = reader.GetInt32("maxplayers");
                     }
                 }
             }

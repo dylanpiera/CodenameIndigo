@@ -14,7 +14,7 @@ namespace CodenameIndigo.Modules
 {
     public class RegistrationCommands : InteractiveBase
     {
-        [Command("register", RunMode = RunMode.Async), Alias(new[] { "signup" }), InSignupPrecon(), UserNotRegisteredPrecon()]
+        [Command("register", RunMode = RunMode.Async), Alias(new[] { "signup" }), InSignupPrecon(), UserNotRegisteredPrecon(), Ratelimit(1, 2, Measure.Minutes)]
         public async Task Register()
         {
             Player player = new Player() { Id = Context.User.Id, DiscordName = Context.User.Username + "#" + Context.User.Discriminator };
@@ -37,7 +37,6 @@ namespace CodenameIndigo.Modules
                 $"Please provide your Showdown Username?",
                 Footer = new EmbedFooterBuilder() { Text = "If you do not answer within 2 minutes you will need to use `?register` again." }
             });
-            await Task.Delay(500);
             SocketMessage response = await NextMessageAsync(new EnsureChannelCriterion(channel.Id), TimeSpan.FromMinutes(2));
             if(response.Content.Length > 18)
             {
@@ -54,7 +53,6 @@ namespace CodenameIndigo.Modules
                 Description = $"Okay, {player.ShowdownName}! Please paste your team below. Type `howto` if you don't know where to find your team data.",
                 Footer = new EmbedFooterBuilder() { Text = "If you do not answer within 2 minutes you will need to use `?register` again." }
             });
-            await Task.Delay(500);
             response = await NextMessageAsync(new EnsureChannelCriterion(channel.Id), TimeSpan.FromMinutes(2));
             player.Team = response.Content;
 
@@ -82,7 +80,6 @@ namespace CodenameIndigo.Modules
                 Description = $"Please respond with Yes or No",
                 Footer = new EmbedFooterBuilder() { Text = "If you do not answer within 2 minutes you will need to use `?register` again." }
             });
-            await Task.Delay(500);
             Confirm:
             response = await NextMessageAsync(new EnsureChannelCriterion(channel.Id), TimeSpan.FromMinutes(2));
 
