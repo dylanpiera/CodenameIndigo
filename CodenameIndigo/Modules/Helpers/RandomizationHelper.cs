@@ -11,7 +11,7 @@ namespace CodenameIndigo.Modules
 {
     public static class RandomizationHelper
     {
-        public static async Task<List<Player>> GenerateBrackets(int tourneyID)
+        public static async Task<List<Player>> GetPlayersInTourney(int tourneyID)
         {
             MySqlConnection conn = DatabaseHelper.GetClosedConnection();
             List<Player> participants = new List<Player>();
@@ -39,7 +39,7 @@ namespace CodenameIndigo.Modules
                     {
                         participants.Add(new Player
                         {
-                            Id = (ulong)reader.GetInt64("uuid"),
+                            Id = (ulong)reader.GetInt64("uid"),
                             Pid = reader.GetInt32("pid"),
                             DiscordName = reader.GetString("discordusername"),
                             ShowdownName = reader.GetString("showdownusername"),
@@ -50,7 +50,7 @@ namespace CodenameIndigo.Modules
             }
             catch (Exception e)
             {
-                await Program.Log(e.ToString(), "GenerateBrackets", Discord.LogSeverity.Error);
+                await Program.Log(e.ToString(), "GetPlayersInTourney", Discord.LogSeverity.Error);
             }
             finally
             {
@@ -59,50 +59,57 @@ namespace CodenameIndigo.Modules
             return participants;
         }
 
-        public static async void RandomizeBrackets(this List<Player> participants, int tid)
+        public static async Task<bool> GenerateRandomBrackets(this List<Player> participants, int tid)
         {
-            List<Player> shuffledPlayers = (List<Player>)participants.Shuffle();
+            List<Player> shuffledPlayers = participants.Shuffle().ToList<Player>();
             List<Bracket> brackets = new List<Bracket>();
+            bool ok;
 
             if (shuffledPlayers.Count % 2 != 0)
             {
+                await Program.Log($"giving {shuffledPlayers[shuffledPlayers.Count-1].Pid} a bye");
                 brackets.Add(new Bracket(tid, shuffledPlayers[shuffledPlayers.Count - 1]));
-                shuffledPlayers.RemoveAt(shuffledPlayers.Count);
+                shuffledPlayers.RemoveAt(shuffledPlayers.Count-1);
             }
 
             for (int i = 0; i < shuffledPlayers.Count; i += 2)
             {
+                await Program.Log($"Pairing {shuffledPlayers[i].Pid} & {shuffledPlayers[i+1].Pid}");
                 brackets.Add(new Bracket(tid, shuffledPlayers[i], shuffledPlayers[i + 1]));
             }
-
 
             MySqlConnection conn = DatabaseHelper.GetClosedConnection();
             try
             {
                 await conn.OpenAsync();
-                
+
                 foreach (Bracket item in brackets)
                 {
                     MySqlCommand cmd = new MySqlCommand($"INSERT INTO `battles`(`tid`, `round`, `player1`, `player2`, `winner`) VALUES ({item.TID},{item.Round},{item.Player1.Pid},{item.Player2.Pid},{item.Winner})", conn);
                     await cmd.ExecuteNonQueryAsync();
                 }
+                ok = true;
             }
             catch (Exception e)
             {
-                await Program.Log(e.ToString(), "DatabaseConn", LogSeverity.Error);
+                await Program.Log(e.ToString(), "GenerateRandomBrackets", LogSeverity.Error);
+                ok = false;
             }
             finally
             {
                 await conn.CloseAsync();
             }
+            return ok;
         }
 
         public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source, Int32? seed = null)
         {
             List<T> buffer = source.ToList();
 
-            Random random = seed.HasValue ? new Random(seed.Value) : new Random();
+            Random random;
 
+            random = seed.HasValue ? new Random(seed.Value) : new Random();
+            
             Int32 count = buffer.Count;
 
             for (Int32 i = 0; i < count; i++)

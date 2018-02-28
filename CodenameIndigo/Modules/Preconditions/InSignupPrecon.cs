@@ -24,7 +24,7 @@ namespace CodenameIndigo.Modules.Preconditions
                 {
                     while (await reader.ReadAsync())
                     {
-                        UNIXTime = reader.GetInt64(0);
+                        UNIXTime = reader.GetInt64("regend");
                     }
                 }
             }

@@ -12,7 +12,7 @@ namespace CodenameIndigo.Modules.Commands
         [Command("playerlist")]
         public async Task PlayerList()
         {
-            List<Player> participants = await RandomizationHelper.GenerateRandomBracketsAsync(false);
+            List<Player> participants = await RandomizationHelper.GetPlayersInTourney((await DatabaseHelper.GetLatestTourneyAsync()).ID);
 
             string participantString = "Discord Username - Showdown Username\n\n";
             foreach (Player player in participants)
