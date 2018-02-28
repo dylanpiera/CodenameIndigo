@@ -67,12 +67,12 @@ namespace CodenameIndigo.Modules
                 {
                     while(await reader.ReadAsync())
                     {
-                        tourney.ID = reader.GetInt32(0);
-                        tourney.Name = reader.GetString(1);
-                        tourney.Regstart = reader.GetInt32(2);
-                        tourney.Regend = reader.GetInt32(3);
-                        tourney.MinPlayers = reader.GetInt32(13);
-                        tourney.MaxPlayers = reader.GetInt32(14);
+                        tourney.ID = reader.GetInt32("tid");
+                        tourney.Name = reader.GetString("tournament");
+                        tourney.Regstart = reader.GetInt32("regstart");
+                        tourney.Regend = reader.GetInt32("regend");
+                        tourney.MinPlayers = reader.GetInt32("minplayers");
+                        tourney.MaxPlayers = reader.GetInt32("maxplayers");
                     }
                 }
             }

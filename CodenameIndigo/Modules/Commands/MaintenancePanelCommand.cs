@@ -28,6 +28,7 @@ namespace CodenameIndigo.Modules.Commands
             MySqlConnection conn = DatabaseHelper.GetClosedConnection();
             Tourney tourney = await DatabaseHelper.GetLatestTourneyAsync();
 
+            Restart:
             EmbedBuilder builder = new EmbedBuilder() { Title = "Mod CP", Color = Color.DarkGrey, Footer = new EmbedFooterBuilder() { Text = "If you do not answer within 2 minutes you will need to use `?modcp` again." } };
             builder.Description = $"Hey there {Context.User.Username}! You're currently editing tourney #{tourney.ID} - {tourney.Name}\nPlease choose one of these options by sending their number to me.\n" +
                 $"1. Show/Change Signup Date\n" +
@@ -37,7 +38,6 @@ namespace CodenameIndigo.Modules.Commands
                 $"5. Change Tourney - Current tourney: {tourney.Name}\n" +
                 $"6. Start New Tourney\n" +
                 $"7. Close Menu";
-            Restart:
             await channel.SendMessageAsync("", false, builder.Build());
 
             SocketMessage response = await NextMessageAsync(new EnsureChannelCriterion(channel.Id), TimeSpan.FromMinutes(2));
