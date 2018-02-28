@@ -1,0 +1,140 @@
+@font-face {
+	font-family: Whitney;
+	src: url("./fonts/whitney-book.otf");
+}
+	@font-face {
+		font-family: Whitney;
+		src: url("./fonts/whitney-bold.otf");
+		font-weight: bold;
+	}
+	@font-face {
+		font-family: Whitney;
+		src: url("./fonts/whitney-bookitalic.otf");
+		font-style: italic;
+	}
+
+body {
+	background-color: #000033;
+	color: hsla(0, 0%, 100%, .7);
+	font-family: "Gill Sans MT", sans-serif;
+}
+
+a {
+	color: #0096CF;
+	text-decoration: none;
+}
+	a:hover {
+		text-decoration: underline;
+	}
+
+.smalltext {
+	font-size: small;
+}
+
+.main {
+	width: 1000px;
+	border-collapse: collapse;
+	margin: auto;
+}
+
+.menu {
+	width: 200px;
+	background-color: #000066;
+	vertical-align: top;
+	padding-bottom: 8px;
+}
+
+.discord {
+	background-color: #000000;
+	height: 80px;
+}
+
+.menuitems {
+	clear: left;
+	color: #72767D;
+	padding-left: 8px;
+}
+	.menuitems a {
+		color: #33CCFF;
+	}
+	.menuitem {
+		padding-top: 12px;
+	}
+
+.avatar {
+	background-size: 64px 64px;
+	height: 64px;
+	width: 64px;
+	background-clip: padding-box;
+	background-position: 50%;
+	border-radius: 50%;
+	margin: 4px 16px 4px 4px;
+	float: left;
+}
+
+.accountdetails {
+	color: #FFF;
+	padding-top: 20px;
+}
+	.accountdetails .discriminator {
+		opacity: .4;
+		font-size: 10px;
+		margin-top: 4px;
+	}
+
+.content {
+	background-color: #FFFFCC;
+	padding: 4px;
+	text-align: justify;
+	vertical-align: top;
+	padding-bottom: 8px;
+	color: #000099;
+}
+	.contenttitle {
+		border-bottom: 2px solid #292B2E;
+		padding-left: 24px;
+		text-align: left;
+		font-size: 32px;
+		padding-bottom: 6px;
+		margin-bottom: 8px;
+		color: #000066;
+	}
+
+.notice {
+	margin: 6px 0px 6px 4px;
+	padding-left: 16px;
+	padding-bottom: 6px;
+	border-bottom: 2px solid #424549;
+}
+	.notice.green {
+		border-left: 2px solid #CFC;
+	}
+	.notice.red {
+		border-left: 2px solid #F9C;
+	}
+
+.tournament {
+	border-bottom: 2px solid #424549;
+	padding-bottom: 6px;
+	margin-bottom: 6px;
+}
+	.tournament strong {
+		margin-left: 16px;
+	}
+	.tournament:last-child {
+		border-bottom: none;
+	}
+
+.battle {
+	background-color: #2B2C31;
+	border: 1px solid #424549;
+}
+	.battle td:hover {
+		background-color: #313432;
+	}
+	.battle td.green {
+		background-color: #CFC;
+	}
+	.battle td.red {
+		background-color: #F9C;
+	}
