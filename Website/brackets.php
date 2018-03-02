@@ -13,10 +13,22 @@
 			";
 		}
 		else {
-			$battle_q = $db->query("SELECT * FROM battles WHERE tid = " . $tournament['tid'] . " ORDER BY bid ASC");
+			$player = array();
+			$tdcount = array();
+			$round = array();
+			$participant_q = $db->query("SELECT * FROM participants WHERE tid = " . $tournament['tid']);
+			while($participant = $participant_q->fetch()) {
+				$player[$participant['pid']] = $participant;
+			}
+			$player[0] = array(
+				'discordusername' => "/ Bye /",
+				'showdownusername' => "Randomly selected to automatically advance to the next round."
+			);
+			$battle_q = $db->query("SELECT * FROM battles WHERE tid = " . $tournament['tid'] . " ORDER BY bid DESC");
 			while($battle = $battle_q->fetch()) {
 				if(!isset($tdcount[$battle['round']])) {
 					$tdcount[$battle['round']] = 0;
+					$round[$battle['round']] = "";
 				}
 				if($tdcount[$battle['round']] == 0) {
 					$round[$battle['round']] .= "<tr>";
@@ -39,10 +51,10 @@
 					<td>
 						<table class='battle'>
 							<tr>
-								<td class='" . $p1class . "'>" . esc($battle['player1']) . "</td>
+								<td class='" . $p1class . "' title=\"" . esc($player[$battle['player1']]['showdownusername']) . "\">" . esc($player[$battle['player1']]['discordusername']) . "</td>
 							</tr>
 							<tr>
-								<td class='" . $p2class . "'>" . esc($battle['player2']) . "</td>
+								<td class='" . $p2class . "' title=\"" . esc($player[$battle['player2']]['showdownusername']) . "\">" . esc($player[$battle['player2']]['discordusername']) . "</td>
 							</tr>
 						</table>
 					</td>
