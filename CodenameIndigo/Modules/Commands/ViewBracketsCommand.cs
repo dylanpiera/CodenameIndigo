@@ -20,8 +20,10 @@ namespace CodenameIndigo.Modules.Commands
             if (tid == 0)
                 tid = (await DatabaseHelper.GetLatestTourneyAsync()).ID;
             List<Bracket> brackets = new List<Bracket>();
-            Dictionary<int, Player> players = new Dictionary<int, Player>();
-            players.Add(0, new Player() { Pid = 0, DiscordName = "Bye" });
+            Dictionary<int, Player> players = new Dictionary<int, Player>
+            {
+                { 0, new Player() { Pid = 0, DiscordName = "Bye" } }
+            };
             IUserMessage message = await Context.Channel.SendMessageAsync("Loading brackets...");
 
             MySqlConnection conn = DatabaseHelper.GetClosedConnection();
