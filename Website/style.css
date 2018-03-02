@@ -126,12 +126,10 @@ a {
 	}
 
 .battle {
-	background-color: #2B2C31;
+	background-color: #CFF;
 	border: 1px solid #424549;
+	text-align: center;
 }
-	.battle td:hover {
-		background-color: #313432;
-	}
 	.battle td.green {
 		background-color: #CFC;
 	}

@@ -94,7 +94,7 @@
 									</tr>
 									<tr>
 										<td><label for='team'>Team:</label></td>
-										<td><textarea name='team' id='team' cols='22' rows='1'>" . $registration['team'] . "</textarea></td>
+										<td><textarea name='team' id='team' cols='44' rows='8'>" . $registration['team'] . "</textarea></td>
 									</tr>
 									<tr>
 										<td colspan='2'>
