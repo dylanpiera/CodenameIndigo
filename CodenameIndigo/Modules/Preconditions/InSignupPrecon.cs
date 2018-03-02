@@ -24,7 +24,7 @@ namespace CodenameIndigo.Modules.Preconditions
                 {
                     while (await reader.ReadAsync())
                     {
-                        UNIXTime = reader.GetInt64(0);
+                        UNIXTime = reader.GetInt64("regend");
                     }
                 }
             }
@@ -45,21 +45,30 @@ namespace CodenameIndigo.Modules.Preconditions
 
     class NotInSignupPrecon : PreconditionAttribute
     {
+        private int _tournamentID;
+
+        public NotInSignupPrecon(int id)
+        {
+            _tournamentID = id;
+        }
+
         public async override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider services)
         {
+            if(_tournamentID == 0)
+                _tournamentID = (await DatabaseHelper.GetLatestTourneyAsync()).ID;
             MySqlConnection conn = DatabaseHelper.GetClosedConnection();
             long UNIXTime = 0;
             try
             {
                 await conn.OpenAsync();
 
-                MySqlCommand cmd = new MySqlCommand("SELECT `end_date` FROM `setup` WHERE `tourney_id` = 1", conn);
+                MySqlCommand cmd = new MySqlCommand("SELECT `regend` FROM `tournaments` WHERE `tid` = " + _tournamentID, conn);
 
                 using (MySqlDataReader reader = (MySqlDataReader)await cmd.ExecuteReaderAsync())
                 {
                     while (await reader.ReadAsync())
                     {
-                        UNIXTime = reader.GetInt64(0);
+                        UNIXTime = reader.GetInt64("regend");
                     }
                 }
             }
