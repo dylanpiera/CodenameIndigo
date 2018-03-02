@@ -68,14 +68,14 @@ namespace CodenameIndigo.Modules
             if (shuffledPlayers.Count % 2 != 0)
             {
                 await Program.Log($"giving {shuffledPlayers[shuffledPlayers.Count-1].Pid} a bye");
-                brackets.Add(new Bracket(tid, shuffledPlayers[shuffledPlayers.Count - 1]));
+                brackets.Add(new Bracket(tid, shuffledPlayers[shuffledPlayers.Count - 1].Pid));
                 shuffledPlayers.RemoveAt(shuffledPlayers.Count-1);
             }
 
             for (int i = 0; i < shuffledPlayers.Count; i += 2)
             {
                 await Program.Log($"Pairing {shuffledPlayers[i].Pid} & {shuffledPlayers[i+1].Pid}");
-                brackets.Add(new Bracket(tid, shuffledPlayers[i], shuffledPlayers[i + 1]));
+                brackets.Add(new Bracket(tid, shuffledPlayers[i].Pid, shuffledPlayers[i + 1].Pid));
             }
 
             MySqlConnection conn = DatabaseHelper.GetClosedConnection();
@@ -85,7 +85,7 @@ namespace CodenameIndigo.Modules
 
                 foreach (Bracket item in brackets)
                 {
-                    MySqlCommand cmd = new MySqlCommand($"INSERT INTO `battles`(`tid`, `round`, `player1`, `player2`, `winner`) VALUES ({item.TID},{item.Round},{item.Player1.Pid},{item.Player2.Pid},{item.Winner})", conn);
+                    MySqlCommand cmd = new MySqlCommand($"INSERT INTO `battles`(`tid`, `round`, `player1`, `player2`, `winner`) VALUES ({item.TID},{item.Round},{item.Player1},{item.Player2},{item.Winner})", conn);
                     await cmd.ExecuteNonQueryAsync();
                 }
                 ok = true;
