@@ -20,6 +20,8 @@ namespace CodenameIndigo.Modules.Commands
             if (tid == 0)
                 tid = (await DatabaseHelper.GetLatestTourneyAsync()).ID;
             List<Bracket> brackets = new List<Bracket>();
+            Dictionary<int, Player> players = new Dictionary<int, Player>();
+            players.Add(0, new Player() { Pid = 0, DiscordName = "Bye" });
             IUserMessage message = await Context.Channel.SendMessageAsync("Loading brackets...");
 
             MySqlConnection conn = DatabaseHelper.GetClosedConnection();
@@ -33,6 +35,22 @@ namespace CodenameIndigo.Modules.Commands
                     while (await reader.ReadAsync())
                     {
                         brackets.Add(new Bracket(tid, reader.GetInt32("player1"), reader.GetInt32("player2"), reader.GetInt32("round"), reader.GetInt32("bid"), reader.GetInt32("winner")));
+                    }
+                }
+
+                cmd = new MySqlCommand("SELECT * FROM participants WHERE tid = " + tid, conn);
+                using (MySqlDataReader reader = (MySqlDataReader)await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        players.Add(reader.GetInt32("pid"), new Player()
+                        {
+                            Pid = reader.GetInt32("pid"),
+                            DiscordName = reader.GetString("discordusername"),
+                            Id = reader.GetUInt64("uid"),
+                            ShowdownName = reader.GetString("showdownusername"),
+                            Team = reader.GetString("team")
+                        });
                     }
                 }
             }
@@ -57,24 +75,24 @@ namespace CodenameIndigo.Modules.Commands
                 {
                     EmbedFieldBuilder field = new EmbedFieldBuilder();
 
-                    string p1 = (await item.FetchPlayerAsync(1)).DiscordName, p2 = (await item.FetchPlayerAsync(2)).DiscordName;
-
+                    Player p1 = players[item.Player1], p2 = players[item.Player2];
+                    
                     field.Name = $"Battle {item.BID}:";
                     if (item.Winner == 1)
                         field.Value =
-                            $"**{p1}**\n" +
+                            $"**{p1.DiscordName}**\n" +
                             $"VS\n" +
-                            $"~~{p2}~~";
+                            $"~~{p2.DiscordName}~~";
                     else if (item.Winner == 2)
                         field.Value =
-                            $"~~{p1}~~\n" +
+                            $"~~{p1.DiscordName}~~\n" +
                             $"VS\n" +
-                            $"**{p2}**";
+                            $"**{p2.DiscordName}**";
                     else
                         field.Value =
-                            $"{p1}\n" +
+                            $"{p1.DiscordName}\n" +
                             $"VS\n" +
-                            $"{p2}";
+                            $"{p2.DiscordName}";
                     field.IsInline = true;
                     fields.Add(field);
                 }
