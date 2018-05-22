@@ -56,8 +56,8 @@
 					<div class='tournament'>
 						<strong>" . $tournament['tournament'] . "</strong><br>
 						<em>Registrations for this tournament have not started yet.</em><br>
-						<span class='smalltext'>Registrations open: <a href='https://www.timeanddate.com/worldclock/fixedtime.html?msg=Time+Conversion&iso=" . date('Ymd\THis', $tournament['regstart']) . "&p1=195'>" . date('d/m/Y H:i', $tournament['regstart']) . " CET</a><br>
-						Registrations close: <a href='https://www.timeanddate.com/worldclock/fixedtime.html?msg=Time+Conversion&iso=" . date('Ymd\THis', $tournament['regend']) . "&p1=195'>" . date('d/m/Y H:i', $tournament['regend']) . " CET</a></span>
+						<span class='smalltext'>Registrations open: " . fdate($tournament['regstart']) . "<br>
+						Registrations close: " . fdate($tournament['regend']) . "</span>
 					</div>
 				";
 			}
@@ -105,7 +105,7 @@
 								</table>
 							</form>
 							<span class='smalltext'>Participants registered: " . $registered['COUNT(pid)'] . "/" . $tournament['maxplayers'] . "<br>
-							Registrations close: <a href='https://www.timeanddate.com/worldclock/fixedtime.html?msg=Time+Conversion&iso=" . date('Ymd\THis', $tournament['regend']) . "&p1=195'>" . date('d/m/Y H:i', $tournament['regend']) . " CET</a>
+							Registrations close: " . fdate($tournament['regend']) . "
 							" . ($registration ? "<br><a href='register.php?action=unregister&tid=" . $tournament['tid'] . "'>Click here to cancel your registration.</a>" : "") . "</span>
 						</div>
 					";
@@ -132,7 +132,7 @@
 									</tr>
 								</table>
 								<span class='smalltext'>Participants registered: " . $registered['COUNT(pid)'] . "/" . $tournament['maxplayers'] . "<br>
-								Registrations close: <a href='https://www.timeanddate.com/worldclock/fixedtime.html?msg=Time+Conversion&iso=" . date('Ymd\THis', $tournament['regend']) . "&p1=195'>" . date('d/m/Y H:i', $tournament['regend']) . " CET</a></span>
+								Registrations close: " . fdate($tournament['regend']) . "</span>
 							</div>
 						";
 					}
