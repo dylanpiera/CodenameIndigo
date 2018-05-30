@@ -6,6 +6,9 @@
 		<meta charset="UTF-8">
 	</head>
 	<body>
+		<div class="title">
+			<img src="title.png" alt="BulbaLeague">
+		</div>
 		<table class="main">
 			<tr>
 				<td class="menu">
