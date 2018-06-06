@@ -27,7 +27,6 @@
 				<?php echo($pagecontent); ?>
 			</div>
 		</div>
-
 		<!--table class="main">
 			<tr>
 				<td class="menu">
