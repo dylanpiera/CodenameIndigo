@@ -3,13 +3,13 @@
 	
 	$provider = new \Discord\OAuth\Discord([
 		'clientId' => '409423120194076683',
-		'clientSecret' => 'jS28S7HLTv4aj61_eOqCZE3iFSrXyNmJ',
-		'redirectUri' => 'http://jduriez.fr/bulbaleague/discord.php'
+		'clientSecret' => 'qmX2Hxo6DAANJ2_6Nb6cvG2XX8dUi3R7',
+		'redirectUri' => 'https://bulbaleague.soaringnetwork.com/discord.php'
 	]);
 
 	$options['scope'] = ['identify'];
 	
-	$loginlink = "<a href='" . $provider->getAuthorizationUrl($options) . "'>Log in with Discord</a>";
+	$loginlink = "" . $provider->getAuthorizationUrl($options);
 	
 	if(isset($_GET['code'])) {
 		$token = $provider->getAccessToken('authorization_code', ['code' => $_GET['code']]);

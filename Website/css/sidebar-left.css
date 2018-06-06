@@ -1,0 +1,257 @@
+@import url('http://fonts.googleapis.com/css?family=Open+Sans:400,700');
+
+/* The main content */
+
+.main-content {
+	font-family: Arial, Helvetica, sans-serif;
+	max-width: 100%;
+	margin: 0 0 40px 200px;
+}
+.main-content .container {
+	margin-left: 5px;
+}
+
+body{
+	font:14px/1.5 Arial, Helvetica, sans-serif;
+	padding:0;
+	margin:0;
+}
+
+body,
+html {
+	/*background-color: #0076A3;*/
+	background-color: #fff;
+	color: black;
+}
+
+/* The left sidebar */
+
+.sidebar-left {
+	font-family: Arial, Helvetica, sans-serif;
+	position: fixed;
+	top: 0;
+	left: 0;
+	background-color: #2A2D32;
+	width: 200px;
+	height: 100%;
+	padding: 20px 0;
+}
+
+.sidebar-left .sidebar-links {
+	margin: auto;
+}
+
+.sidebar-left .sidebar-links a {
+	display: block;
+	text-decoration: none;
+	margin: 0 auto 5px auto;
+	padding: 10px 0;
+	background-color: #35393e;
+	text-align: center;
+	color:  #b3bcc5;
+	font-size: 12px;
+	font-weight: bold;
+	border-left-width: 2px;
+	border-left-style: solid;
+}
+
+.sidebar-left .sidebar-links a i.fa {
+	display: block;
+	font-size: 35px;
+	margin-bottom: 5px;
+}
+
+.sidebar-left .sidebar-links a.selected{
+	background-color: #ffffff;
+	color:  #7c8085;
+	font-size: 12px;
+	font-weight: bold;
+	cursor: default;
+}
+
+/* Main Page */
+
+.headerlogo, .headerlogo img {
+	max-width: 100%;
+	max-height: 300px;
+	margin-bottom: 20px;
+	text-align: center;
+
+	background-color: #b3bcc5;
+}
+
+.headerlogo img {
+	max-width: 50%;
+	display: inline-block;
+	margin: 0 -5px 0 0;
+}
+
+/* Discord */
+
+.logoimg {
+	border-radius: 50%;
+	width: 48px;
+	height: 48px;
+}
+.avatar {
+	position: absolute;
+	top: 30px;
+	left: 10px;
+	background-size: 32px;
+	height: 32px;
+	width: 32px;
+	background-clip: padding-box;
+	background-position: 50%;
+	border-radius: 50%;
+	margin: 4px 16px 4px 4px;
+}
+.loginlink a {
+	font-family: "Gill Sans MT", sans-serif;
+	color: cyan;
+}
+
+.accountdetails {
+	color: #FFF;
+	padding-top: 20px;
+}
+
+.accountdetails .discriminator {
+	opacity: .4;
+	font-size: 10px;
+	margin-top: 4px;
+}
+
+
+
+/* Link Colors */
+
+.sidebar-left .sidebar-links a.link-blue {
+	border-color: #487db2;
+}
+.sidebar-left .sidebar-links a.link-blue i.fa {
+	color: #487db2;
+}
+
+.sidebar-left .sidebar-links a.link-cyan {
+	border-color: cyan;
+}
+.sidebar-left .sidebar-links a.link-cyan i.fa {
+	color: cyan;
+}
+
+.sidebar-left .sidebar-links a.link-red {
+	border-color: #da4545;
+}
+.sidebar-left .sidebar-links a.link-red i.fa {
+	color: #da4545;
+}
+
+.sidebar-left .sidebar-links a.link-yellow {
+	border-color: #d0d237;
+}
+.sidebar-left .sidebar-links a.link-yellow i.fa {
+	color: #d0d237;
+}
+
+.sidebar-left .sidebar-links a.link-green {
+	border-color: #86be2e;
+}
+.sidebar-left .sidebar-links a.link-green i.fa {
+	color: #86be2e;
+}
+
+.sidebar-left .sidebar-links a.link-orange {
+	border-color: orange;
+}
+.sidebar-left .sidebar-links a.link-orange i.fa {
+	color: orange;
+}
+
+.sidebar-left .sidebar-links a.link-black {
+	border-color: black;
+}
+.sidebar-left .sidebar-links a.link-black i.fa {
+	color: black;
+}
+
+/* Making the sidebar responsive */
+
+@media (max-width: 900px) {
+
+	.main-content{
+		max-width: none;
+		margin: 0 0 40px;
+	}
+
+	.sidebar-left {
+		width: auto;
+		height: auto;
+		position: inherit;
+		padding: 20px 0 0;
+	}
+	
+	.sidebar-left .discord,
+	.sidebar-left .sidebar-links {
+		text-align: center;
+		margin: 20px auto 0;
+		background-position: center;
+	}
+
+	.sidebar-left .discord a,
+	.sidebar-left .sidebar-links a {
+		display: inline-block;
+		width: 100px;
+		margin: 0;
+		padding: 14px 0;
+		border-left: none;
+		border-top-width: 2px;
+		border-top-style: solid;
+	}
+
+	.sidebar-left {
+		padding: 20px 0;
+	}
+
+	.sidebar-left .sidebar-links {
+		text-align: center;
+		margin: 20px auto 0;
+	}
+
+	.sidebar-left .sidebar-links a {
+		display: block;
+		max-width: 80%;
+		width: auto;
+		text-align: left;
+		margin: 0 auto 5px;
+		padding: 10px 25px;
+		border-top: none;
+		border-left-width: 2px;
+		border-left-style: solid;
+	}
+
+	.sidebar-left .sidebar-links a i.fa {
+		display: inline-block;
+		font-size: 20px;
+		width: 20px;
+		margin: 0 20px 0 0;
+		vertical-align: middle;
+	}
+
+	.avatar {
+		position: inherit;
+	}
+	
+	.logoimg {
+		border-radius: 50%;
+		width: 32px;
+		height: 32px;
+	}
+}
+
+/*	Removing margins and paddings from the body, so that
+    the sidebar takes the full height of the page */
+
+body {
+	margin: 0;
+	padding: 0;
+}
