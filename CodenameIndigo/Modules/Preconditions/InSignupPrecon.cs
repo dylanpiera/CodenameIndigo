@@ -47,6 +47,11 @@ namespace CodenameIndigo.Modules.Preconditions
     {
         private int _tournamentID;
 
+        public NotInSignupPrecon()
+        {
+
+        }
+
         public NotInSignupPrecon(int id)
         {
             _tournamentID = id;
