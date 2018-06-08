@@ -27,6 +27,11 @@ a {
 		text-decoration: underline;
 	}
 
+.title {
+	text-align: center;
+	margin-bottom: 8px;
+}
+
 .smalltext {
 	font-size: small;
 }
@@ -136,3 +141,11 @@ a {
 	.battle td.red {
 		background-color: #F9C;
 	}
+
+.inpagemenu {
+	border-left: 1px solid #000033;
+	border-bottom: 1px solid #000033;
+	margin: 0px 0px 16px 4px;
+	padding: 0px 0px 4px 4px;
+	width: 60%;
+}
