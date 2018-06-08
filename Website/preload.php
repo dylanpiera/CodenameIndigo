@@ -15,6 +15,9 @@
 		if($checkadmin = $db->query("SELECT * FROM admins WHERE uid = " . $uid)->fetch()) {
 			$admin = true;
 		}
+		elseif($checkskinedit = $db->query("SELECT * FROM `skineditor` WHERE uid = " . $uid)->fetch()) {
+			$skinedit = true;
+		}
 	}
 	
 	function esc($s) {
@@ -33,6 +36,24 @@
 			return "<a href='https://www.timeanddate.com/worldclock/fixedtime.html?msg=Time+Conversion&iso=" . date('Ymd\THis', $timestamp) . "&p1=179'>" . date('m/d/Y g:i A', $timestamp) . " EST</a>";
 		}
 	}
+
+	function getColorFromDB(string $col, $db, $uid) {
+    try {
+        if($col_db = $db->query("SELECT * FROM `colors` WHERE `uid` = '".dbesc($uid)."'")->fetch()) {
+            $color = $col_db[$col];
+        }
+        elseif($col_db = $db->query("SELECT * FROM `colors` WHERE `uid` = '0'")->fetch()) {
+            $color = $col_db[$col];
+        }
+        else {
+            $color = "#fff";
+        }
+    }
+    catch (Exception $e) {
+        return "#fff";
+    }
+    return $color;
+}
 	
 	include_once("./discord.php");
 ?>
