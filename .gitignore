@@ -260,3 +260,7 @@ paket-files/
 __pycache__/
 *.pyc
 CodenameIndigo/Sneaky\.cs
+
+Website/db\.php
+
+Website/discord\.php
