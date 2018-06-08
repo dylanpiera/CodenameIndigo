@@ -30,22 +30,6 @@
 		<a class="link-yellow" href="./brackets.php"><i class="fa fa-balance-scale"></i>Brackets</a>
 		<a class="link-green" href="./planning.php"><i class="fa fa-bookmark"></i>Planning</a>
 		<a class="link-gray" href="./halloffame.php"><i class="fa fa-flag"></i>Hall of Fame</a>
-		<?php if (isset($admin)) {?><a class="link-black" href="./controlpanel.php"><i class="fa fa-exclamation-triangle"></i>Admin</a><?php } ?>
+		<?php if (isset($admin) || isset($skinedit)) {?><a class="link-black" href="./controlpanel.php"><i class="fa fa-exclamation-triangle"></i>Admin</a><?php } ?>
 	</div>
 </aside>
-
-<!--div class="discord">
-	<div class="avatar" style="background-image: url('<?php //echo($avatar); ?>');"></div>
-	<div class='accountdetails'>
-		<?php //echo($accdetails); ?>
-	</div>
-</div>
-<div class="menuitems">
-	<div class="menuitem"><a href="./index.php">Home</a></div>
-	<div class="menuitem"><a href="./rules.php">Rules</a></div>
-	<?//php if(isset($uid)) { ?><div class="menuitem"><a href="./register.php">Register</a></div><?//php } ?>
-	<div class="menuitem"><a href="./brackets.php">Brackets</a></div>
-	<div class="menuitem"><a href="./planning.php">Planning</a></div>
-	<div class="menuitem"><a href="./halloffame.php">Hall of Fame</a></div>
-	<?//php if(isset($admin)) { ?><div class="menuitem"><a href="./controlpanel.php">Control Panel</a></div><?//php } ?>
-</div-->
