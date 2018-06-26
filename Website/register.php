@@ -88,7 +88,26 @@
 					$regmsg = "You are not registered for this tournament.";
 				}
 				if(time() <= $tournament['regend']) {
-					$tournamentlist .= "
+					$plq = $db->query("SELECT * FROM `participants` WHERE `tid` = ".$tournament['tid']." ORDER BY `pid` ASC LIMIT 0,".$tournament['maxplayers']);
+					$playerlist = "
+					<div class='tournament table-responsive' style='overflow: hidden;'>
+						<span class='form-text alert alert-warning'>Work in Progress</span>
+						<table class='table table-sm'>
+						<thead>
+							<tr>
+								<th class='font-weight-bold' scope='col'>Discord Name</th>
+								<th class='font-weight-bold' scope='col'>Showdown Name</th>
+							</tr>
+						</thead>
+						<tbody >
+					";
+					while($playerlistdata = $plq->fetch()) {
+						$playerlist .= "<tr><th scope='col' class='font-weight-normal'>".$playerlistdata['discordusername']."</th><th scope='col' class='font-weight-normal'>".$playerlistdata['showdownusername']."<th>";
+					}
+					$playerlist .= "</tbody></table></div>";
+					
+					$tournamentlist .= "<div class='row'>
+					<div class='col-12 col-sm-12 col-md-8 col-lg-8 col-xl-8'>
 						<div class='tournament'>
 							<form method='post' action='register'>
 								<div class='form-group row align-items-center'>
@@ -139,6 +158,11 @@
 								</div>
 							</form>
 						</div>
+					</div>
+					<div class='col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4'>
+						".$playerlist."
+					</div>
+					</div>
 					";
 				}
 				else {
@@ -215,11 +239,8 @@
 			</div>
 		</div>
 		<div class='row'>
-			<div class='col-12 col-sm-12 col-md-8 col-lg-8 col-xl-8'>
+			<div class='col-12 col-sm-12'>
 				" . $tournamentlist . "
-			</div>
-			<div class='smallhide col-md-4 col-lg-4 col-xl-4'>
-				<span style='text-align:center;display:block;max-height:90%;height:500px;line-height: 500px;font-size: 1.5em;background-color:".getColorFromDB("hbgcolor", $db, $uid)."'>Other Participant List</span>
 			</div>
 		</div>
 		";

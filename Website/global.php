@@ -20,6 +20,22 @@
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
 		<link href="https://fonts.googleapis.com/css?family=Ubuntu:400,700" rel="stylesheet">
+
+		<!-- Matomo -->
+		<script type="text/javascript">
+  		var _paq = _paq || [];
+  		/* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  		_paq.push(['trackPageView']);
+  		_paq.push(['enableLinkTracking']);
+  		(function() {
+    		var u="//api.soaringnetwork.com/piwik/";
+    		_paq.push(['setTrackerUrl', u+'piwik.php']);
+    		_paq.push(['setSiteId', '1']);
+    		var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    		g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  		})();
+		</script>
+		<!-- End Matomo Code -->
 	</head>
 	<body>
 		<?php include("./menu.php")?>

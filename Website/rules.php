@@ -47,19 +47,8 @@
 								<li>Rematch if battle ends in a draw.</li>
 							</ul>
 							<small class='text-muted'>
-								<div id='legalityHeader'>
-									<a class='text-muted' data-toggle='collapse' href='#legalityCollapse' role='button' aria-expanded='false' aria-control='legalityCollapse'>
-										Please make sure that your team is OU legal before registering with it. <u>click here to find out how</u>
-									</a>
-								</div>
+								Please make sure that your team is OU legal before registering with it. <u>See info below. \"How to use Pokemon Showdown\"</u>
 							</small>
-							<div id='legalityCollapse' class='collapse' aria-labelledby='legalityHeader'>
-								<div class='card'>
-									<div class='card-body'>
-										Explanation coming soon.
-									</div>
-								</div>
-							</div>
 							<br>
 							<p>
 								The team you sign up with stays hidden for others until the tournament starts. After which you can't change your team anymore.<br>
@@ -74,6 +63,38 @@
 								<br><br>
 								After your battle both players must upload the replay on discord and mention DN and Dylan, and specify who won/lost. 
 							</p>
+							<br>
+							<div id='showdownHeader'>
+								<a data-toggle='collapse' href='#showdownCollapse' role='button' aria-expanded='false' aria-control='showdownCollapse'>
+									<h5>How to use Pokemon Showdown</h5>
+								</a>
+							</div>
+							<div id='showdownCollapse' class='collapse' aria-labelledby='showdownHeader'>
+								<div class='card'>
+									<div class='card-body'>
+										<small class='text-muted'>This section is for those who haven't used Showdown Before</small>
+										<br><br>
+										<span id='menu'><h5 class='mt-0'>Main Page</h5></span>
+										<img src='http://bulbaimages.kaoticsilence.com/howto1.jpg' class='img-fluid' alt='Showdown Homepage'>
+										<br>
+										This is the main page of Showdown. The top-right red arrow points to \"Choose Name,\" where you can choose your username. After you choose a name, \"Choose Name\" will be replaced with your username. Now you can click the gear icon to the right of your new username and use Register to keep your new username and add a password to your account. The arrows on the right side of the screen point you to Teambuilder.
+										<br><br>
+										<span id='team'><h5 class='mt-0'>Team Builder</h5></span>
+										In the next screen choose New Team. From there you can add pokemon until you fill your party. You can choose your stats for them, held item, ability, etc.
+										<br>
+										<img src='http://bulbaimages.kaoticsilence.com/howto2.jpg' class='img-fluid' alt='Showdown Teambuilder'>
+										<br>
+										The second arrow points to \"Validate,\" which will tell you if your team fits into the tier we're using (Gen 7 OU), and if it doesn't fit into that tier it will tell you what you need to fix in order for it to fit. From here you can click on the different sections for each of your Pokemon to edit stuff (for instance, if you want to change the moves just click on the moves in that Pokemon's section).
+										<br><br>
+										The first arrow points to \"Import/Export.\" This is the button you need to click to register your team with the bot or here on the website. It will take you to a text list of your team's stuff, which you can then copy-paste when you use ?register for the bot or in the appropriate input field when registering on here. 
+										<br><br>
+										<span id='replay'><h5 class='mt-0'>Replays & How to Save Them</h5></span>
+										<img src='http://bulbaimages.kaoticsilence.com/howto3.jpg' class='img-fluid' alt='Showdown Upload Replay'>
+										<br>
+										After your battle, this \"Upload and share replay\" button will appear. Click it to get the link you need to pm me or post it in the thread on the forums. I think that's it! Good luck and have fun, you guys, and thanks so much for participating!
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
