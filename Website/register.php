@@ -6,6 +6,7 @@
 		$pagecontent = "
 			In order to access this page, you need to be logged in.
 		";
+		$pagedescription = $pagecontent;
 	}
 	
 	else {
@@ -15,14 +16,14 @@
 				if($tournament = $db->query("SELECT * FROM tournaments WHERE tid = '" . dbesc($_GET['tid']) . "'")->fetch()) {
 					if(time() >= $tournament['regstart'] AND time() <= $tournament['regend']) {
 						$db->query("DELETE FROM participants WHERE tid = '" . dbesc($_GET['tid']) . "' AND uid = " . $uid);
-						$notice = "<div class='notice green'>Your registration has been cancelled..</div>";
+						$notice = "<div class='alert alert-info'>Your registration has been cancelled.</div>";
 					}
 					else {
-						$notice = "<div class='notice red'>Registrations for this tournament are not open.</div>";
+						$notice = "<div class='alert alert-warning'>Registrations for this tournament are not open.</div>";
 					}
 				}
 				else {
-					$notice = "<div class='notice red'>The requested tournament does not exist.</div>";
+					$notice = "<div class='alert alert-danger'>The requested tournament does not exist.</div>";
 				}
 			}
 		}
@@ -32,19 +33,19 @@
 				if(time() >= $tournament['regstart'] AND time() <= $tournament['regend']) {
 					if($registration) {
 						$db->query("UPDATE participants SET discordusername = '" . dbesc($fullname) . "', showdownusername = '" . dbesc($_POST['showdown']) . "', team = '" . dbesc($_POST['team']) . "' WHERE tid = '" . dbesc($_POST['tid']) . "' AND uid = " . $uid);
-						$notice = "<div class='notice green'>Your registration details have been updated.</div>";
+						$notice = "<div class='alert alert-success'>Your registration details have been updated.</div>";
 					}
 					else {
 						$db->query("INSERT INTO participants(tid, uid, discordusername, showdownusername, team) VALUES('" . dbesc($_POST['tid']) . "', " . $uid . ", '" . dbesc($fullname) . "', '" . dbesc($_POST['showdown']) . "', '" . dbesc($_POST['team']) . "')");
-						$notice = "<div class='notice green'>Your registration details have been saved.</div>";
+						$notice = "<div class='alert alert-success'>Your registration details have been saved.</div>";
 					}
 				}
 				else {
-					$notice = "<div class='notice red'>Registrations for this tournament are not open.</div>";
+					$notice = "<div class='alert alert-danger'>Registrations for this tournament are not open.</div>";
 				}
 			}
 			else {
-				$notice = "<div class='notice red'>The requested tournament does not exist.</div>";
+				$notice = "<div class='alert alert-danger'>The requested tournament does not exist.</div>";
 			}
 		}
 		
@@ -54,10 +55,20 @@
 			if(time() < $tournament['regstart']) {
 				$tournamentlist .= "
 					<div class='tournament'>
-						<strong>" . $tournament['tournament'] . "</strong><br>
-						<em>Registrations for this tournament have not started yet.</em><br>
-						<span class='smalltext'>Registrations open: " . fdate($tournament['regstart']) . "<br>
-						Registrations close: " . fdate($tournament['regend']) . "</span>
+						<div class='form-group row align-items-center'>
+							<div class='col-sm-3'>
+								<big class='form-text font-weight-bold'>".$tournament['tournament']."</big>
+							</div>
+							<div class='col-sm-9'>
+								<span class='form-text alert alert-warning'>
+									Registrations for this tournament have not started yet.
+									<small class='form-text text-muted'>
+										Registrations open: " . fdate($tournament['regstart']) . "<br>
+										Registrations close: " . fdate($tournament['regend']) . "
+									</small>
+								</span>
+							</div>
+						</div>
 					</div>
 				";
 			}
@@ -79,61 +90,106 @@
 				if(time() <= $tournament['regend']) {
 					$tournamentlist .= "
 						<div class='tournament'>
-							<strong>" . $tournament['tournament'] . "</strong><br>
-							<em>" . $regmsg . "<br>
-							Registrations for this tournament are currently open, fill the form below to " . ($registration ? "edit your registration details" : "register") . ".</em><br>
-							<form method='post' action='register.php'>
-								<table>
-									<tr>
-										<td><label for='discord'>Discord Username:</label></td>
-										<td><input type='text' name='discord' id='discord' value=\"" . esc($fullname) . "\" readonly></td>
-									</tr>
-									<tr>
-										<td><label for='showdown'>Showdown Username:</label></td>
-										<td><input type='text' name='showdown' id='showdown' value=\"" . esc($registration['showdownusername']) . "\" maxlength='18'></td>
-									</tr>
-									<tr>
-										<td><label for='team'>Team:</label></td>
-										<td><textarea name='team' id='team' cols='44' rows='8'>" . $registration['team'] . "</textarea></td>
-									</tr>
-									<tr>
-										<td colspan='2'>
-											<input type='hidden' name='tid' value='" . $tournament['tid'] . "'>
-											<input type='submit' value='" . ($registration ? "Edit Registration Details" : "Register") . "'>
-										</td>
-									</tr>
-								</table>
+							<form method='post' action='register'>
+								<div class='form-group row align-items-center'>
+									<big class='form-text font-weight-bold col-sm-3'>".$tournament['tournament']."</big>
+									<div class='col-sm-9'>
+										<span class='form-text alert alert-info'>".$regmsg."</span>
+										<span class='form-text alert alert-success'>
+										Registrations for this tournament are currently open, fill the form below to " . ($registration ? "edit your registration details" : "register") . "
+										</span>
+									</div>
+								</div>
+								<div class='form-group row align-items-center'>
+									<div class='col-sm-3'>
+										<label for='discord' class='col-form-label'>Discord Username:</label>
+									</div>
+									<div class='col-sm-9'>
+										<input type='text' class='form-control' name='discord' id='discord' value=\"" . esc($fullname) . "\" readonly>
+									</div>
+								</div>
+								<div class='form-group row align-items-center'>
+									<div class='col-sm-3'>
+										<label for='showdown' class='col-form-label'>Showdown Username:</label>
+									</div>
+									<div class='col-sm-9'>
+										<input type='text' class='form-control' name='showdown' id='showdown' value=\"" . esc($registration['showdownusername']) . "\" maxlength='18'>
+									</div>
+								</div>
+								<div class='form-group row align-items-center'>
+									<div class='col-sm-3'>
+										<label for='team' class='col-form-label'>Team:</label>
+									</div>
+									<div class='col-sm-9'>
+									<textarea name='team' class='form-control' id='team' cols='44' rows='8'>" . $registration['team'] . "</textarea>
+									</div>
+								</div>
+								<div class='form-group row align-items-center'>
+									<input type='hidden' name='tid' value='" . $tournament['tid'] . "'>
+									<div class='col-sm-5'>
+										<input type='submit' class='form-control btn btn-primary' value='" . ($registration ? "Edit Registration Details" : "Register") . "'>
+										" . ($registration ? "<br><a href='register?action=unregister&tid=" . $tournament['tid'] . "' class='btn btn-danger form-control' role='button'>Cancel Registration.</a>" : "") . "
+									</div>
+									<div class='col-sm-7'>
+										<small class='form-text text-muted'>Participants registered: " . $registered['COUNT(pid)'] . "/" . $tournament['maxplayers'] . "</small>
+										<span>
+										Registrations close: " . fdate($tournament['regend']) . "
+										</span>
+									</div>
+								</div>
 							</form>
-							<span class='smalltext'>Participants registered: " . $registered['COUNT(pid)'] . "/" . $tournament['maxplayers'] . "<br>
-							Registrations close: " . fdate($tournament['regend']) . "
-							" . ($registration ? "<br><a href='register.php?action=unregister&tid=" . $tournament['tid'] . "'>Click here to cancel your registration.</a>" : "") . "</span>
 						</div>
 					";
 				}
 				else {
 					if($registration) {
 						$tournamentlist .= "
-							<div class='tournament'>
-								<strong>" . $tournament['tournament'] . "</strong><br>
-								<em>" . $regmsg . "<br>
-								Registrations for this tournament are closed, you can see your registration details below, but not edit them readonly.</em><br>
-								<table>
-									<tr>
-										<td><label for='discord'>Discord Username:</label></td>
-										<td><input type='text' name='discord' id='discord' value=\"" . esc($fullname) . "\" readonly></td>
-									</tr>
-									<tr>
-										<td><label for='showdown'>Showdown Username:</label></td>
-										<td><input type='text' name='showdown' id='showdown' value=\"" . esc($registration['showdownusername']) . "\" maxlength='18' readonly></td>
-									</tr>
-									<tr>
-										<td><label for='team'>Team:</label></td>
-										<td><textarea name='team' id='team' cols='22' rows='1' readonly>" . $registration['team'] . "</textarea></td>
-									</tr>
-								</table>
-								<span class='smalltext'>Participants registered: " . $registered['COUNT(pid)'] . "/" . $tournament['maxplayers'] . "<br>
-								Registrations close: " . fdate($tournament['regend']) . "</span>
+						<div class='tournament'>
+						<form method='post' action='register'>
+							<div class='form-group row align-items-center'>
+								<big class='form-text font-weight-bold col-sm-3'>".$tournament['tournament']."</big>
+								<div class='col-sm-9'>
+									<span class='form-text alert alert-info'>".$regmsg."</span>
+									<span class='form-text alert alert-danger'>
+										Registrations for this tournament are closed, you can see your registration details below, but not edit them. <em>readonly.</em>
+									</span>
+								</div>
 							</div>
+							<div class='form-group row align-items-center'>
+								<div class='col-sm-3'>
+									<label for='discord' class='col-form-label'>Discord Username:</label>
+								</div>
+								<div class='col-sm-9'>
+									<input type='text' class='form-control' name='discord' id='discord' value=\"" . esc($fullname) . "\" readonly>
+								</div>
+							</div>
+							<div class='form-group row align-items-center'>
+								<div class='col-sm-3'>
+									<label for='showdown' class='col-form-label'>Showdown Username:</label>
+								</div>
+								<div class='col-sm-9'>
+									<input type='text' class='form-control' name='showdown' id='showdown' value=\"" . esc($registration['showdownusername']) . "\" maxlength='18' readonly>
+								</div>
+							</div>
+							<div class='form-group row align-items-center'>
+								<div class='col-sm-3'>
+									<label for='team' class='col-form-label'>Team:</label>
+								</div>
+								<div class='col-sm-9'>
+								<textarea name='team' class='form-control' id='team' cols='44' rows='8' readonly>" . $registration['team'] . "</textarea>
+								</div>
+							</div>
+							<div class='form-group row align-items-center'>
+								<div class='col-sm-3'></div>	
+								<div class='col-sm-8'>
+									<small class='form-text text-muted'>Participants registered: " . $registered['COUNT(pid)'] . "/" . $tournament['maxplayers'] . "</small>
+									<span>
+									Registrations close: " . fdate($tournament['regend']) . "
+									</span>
+								</div>
+							</div>
+						</form>
+					</div>
 						";
 					}
 					else {
@@ -153,8 +209,19 @@
 		
 		$pagetitle = "Registration";
 		$pagecontent = "
-			" . $notice . "
-			" . $tournamentlist . "
+		<div class='row'>
+			<div class='col-12 col-sm-12 col-md-8 col-lg-8 col-xl-8'>
+				" . $notice . "
+			</div>
+		</div>
+		<div class='row'>
+			<div class='col-12 col-sm-12 col-md-8 col-lg-8 col-xl-8'>
+				" . $tournamentlist . "
+			</div>
+			<div class='smallhide col-md-4 col-lg-4 col-xl-4'>
+				<span style='text-align:center;display:block;max-height:90%;height:500px;line-height: 500px;font-size: 1.5em;background-color:".getColorFromDB("hbgcolor", $db, $uid)."'>Other Participant List</span>
+			</div>
+		</div>
 		";
 	}
 	

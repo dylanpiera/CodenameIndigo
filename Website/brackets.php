@@ -88,6 +88,7 @@
 	$pagecontent = "
 		" . $tournamentlist . "
 	";
+	$pagedescription = "The current standings are...";
 	
 	include("./global.php");
 ?>

@@ -1,5 +1,7 @@
 <?php
 	require_once("./preload.php");
+
+	$pagedescription = "You must be logged in to view this.";
 	
 	function getround($tid) {
 		global $db;
@@ -63,7 +65,7 @@
 					'checked' => $_POST['checked'],
 					'pid' => $_POST['pid']
 				));
-				header('Location: ./controlpanel.php?action=managetournament&tid=' . $tid . '#pid' . $_POST['pid']);
+				header('Location: ./controlpanel?action=managetournament&tid=' . $tid . '#pid' . $_POST['pid']);
 			}
 			elseif($_POST['subaction'] == "battle") {
 				$commit = $db->prepare("UPDATE battles SET replay1 = :replay1, replay2 = :replay2, winner = :winner WHERE bid = :bid");
@@ -73,7 +75,7 @@
 					'winner' => $_POST['winner'],
 					'bid' => $_POST['bid']
 				));
-				header('Location: ./controlpanel.php?action=managetournament&tid=' . $tid . '#bid' . $_POST['bid']);
+				header('Location: ./controlpanel?action=managetournament&tid=' . $tid . '#bid' . $_POST['bid']);
 			}
 			else {
 				$commit = $db->prepare("UPDATE tournaments SET tournament = :tournament, regstart = :regstart, regend = :regend, closure = :closure, roundend = :roundend, nextround = :nextround, minplayers = :minplayers, maxplayers = :maxplayers, e4member1 = :e4member1, e4member2 = :e4member2, e4member3 = :e4member3, e4member4 = :e4member4, e4member5 = :e4member5 WHERE tid = :tid");
@@ -93,7 +95,7 @@
 					'e4member5' => $_POST['e4member5'],
 					'tid' => $tid
 				));
-				header('Location: ./controlpanel.php?action=managetournament&tid=' . $tid);
+				header('Location: ./controlpanel?action=managetournament&tid=' . $tid);
 			}
 		}
 		elseif($action == "donewtournament") {
@@ -108,7 +110,7 @@
 				'minplayers' => $_POST['minplayers'],
 				'maxplayers' => $_POST['maxplayers']
 			));
-			header('Location: ./controlpanel.php?action=managetournament&tid=' . $db->lastInsertId());
+			header('Location: ./controlpanel?action=managetournament&tid=' . $db->lastInsertId());
 		}
 		elseif($action == "managetournament") {
 			$pagesubtitle = "Tournament Management [#" . $tid . "]";
@@ -123,7 +125,7 @@
 			$participant_q = $db->query("SELECT * FROM participants WHERE tid = " . $tid . " ORDER BY pid ASC");
 			while($participant = $participant_q->fetch()) {
 				$participantlist .= "
-					<form method='post' action='controlpanel.php' id='pid" . $participant['pid'] . "'>
+					<form method='post' action='controlpanel' id='pid" . $participant['pid'] . "'>
 						Discord Username / UID: <input type='text' value=\"" . $participant['discordusername'] . "\" readonly> <@" . $participant['uid'] . "><br>
 						<label for='showdownusername'>Showdown Username:</label> <input type='text' name='showdownusername' id='showdownusername' value=\"" . $participant['showdownusername'] . "\"><br>
 						<label for='team'>Showdown Team:</label> <textarea name='team' id='team'>" . $participant['team'] . "</textarea><br>
@@ -147,7 +149,7 @@
 					$battlelist .= "<em>Round " . $round . "</em><br><br>";
 				}
 				$battlelist .= "
-					<form method='post' action='controlpanel.php' id='bid" . $battle['bid'] . "'>
+					<form method='post' action='controlpanel' id='bid" . $battle['bid'] . "'>
 						Player 1: <input type='text' value=\"" . $participantname[$battle['player1']] . "\" readonly><br>
 						Player 2: <input type='text' value=\"" . ($battle['player2'] ? $participantname[$battle['player2']] : "Bye") . "\" readonly><br>
 						<label for='replay1'>Player 1's Replay:</label> <input type='text' name='replay1' id='replay1' value=\"" . $battle['replay1'] . "\"><br>
@@ -179,7 +181,7 @@
 					
 					<strong id='tournament'>Tournament Details</strong><br>
 					<br>
-					<form method='post' action='controlpanel.php'>
+					<form method='post' action='controlpanel'>
 						<label for='tournament'>Tournament Name:</label> <input type='text' name='tournament' id='tournament' value=\"" . $tournament['tournament'] . "\"><br>
 						<br>
 						<label for='regstart'>Registrations Opening Date:</label> <input type='text' name='regstart' id='regstart' value='" . date('m/d/Y g:i A', $tournament['regstart']) . "'><br>
@@ -228,7 +230,7 @@
 			$pagecontent .= "
 			<div class='row'>
 				<div class='col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6'>
-					<form method='post' action='controlpanel.php'>
+					<form method='post' action='controlpanel'>
 						<label for='tournament'>Tournament Name:</label> <input type='text' name='tournament' id='tournament'><br>
 						<br>
 						<label for='regstart'>Registrations Opening Date:</label> <input type='text' name='regstart' id='regstart' placeholder='" . date('m/d/Y g:i A') . "'><br>
@@ -251,7 +253,7 @@
 		elseif($action == "changecolors") {
 
 			$pagetitle = "Saving...";
-			$pagecontent = "<a href='https://bulbaleague.soaringnetwork.com/controlpanel.php'>Click here if the page doesn't load...</a>";
+			$pagecontent = "<a href='https://bulbaleague.soaringnetwork.com/controlpanel'>Click here if the page doesn't load...</a>";
 			
 			if(isset($_POST['overrideDefault']))
 			{
@@ -289,7 +291,7 @@
 				));
 			}
 
-			header("Location: ./controlpanel.php");
+			header("Location: ./controlpanel");
 		}
 		else {
 			$pagesubtitle = "Tournament List";
@@ -297,7 +299,7 @@
 			$tournamentlist = "
 				<div class='row'>
 					<div class='col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6'>
-						<strong><a href='./controlpanel.php?action=newtournament'>New Tournament</a></strong><br><br>
+						<strong><a href='./controlpanel?action=newtournament'>New Tournament</a></strong><br><br>
 			";
 			$tournamentsublist = array(
 				"Planned" => false,
@@ -316,7 +318,7 @@
 					$tournament['round'] = "";
 				}
 				$tournamentsublist[$tournament['status']] .= "
-					<a href='./controlpanel.php?action=managetournament&tid=" . $tournament['tid'] . "'>Tournament #" . $tournament['tid'] . " : " . $tournament['tournament'] . "</a><br>
+					<a href='./controlpanel?action=managetournament&tid=" . $tournament['tid'] . "'>Tournament #" . $tournament['tid'] . " : " . $tournament['tournament'] . "</a><br>
 					Status: " . $tournament['status'] . $tournament['round'] . "<br><br>
 				";
 			}
@@ -344,13 +346,13 @@
 			}
 			$skincoloredits = "
 				</div>
-				<div class='col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6' style='background-color: #ffffffb0; '>
+				<div class='col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6' style='background-color: #ffffffb0; padding-bottom: 5px;'>
 				<style>.form-row {padding-bottom:10px;}</style>
 					<strong>Color Settings:</strong><br><br>
 
-					<form method='post' action='controlpanel.php'>
+					<form method='post' action='controlpanel'>
 						<div class='row form-row'>
-						<!--form method='post' action='controlpanel.php'-->
+						<!--form method='post' action='controlpanel'-->
 						<div class='col-md-8 mb-6'>
 							<label for='mbgcolor'>Main Background Color:</label><br>
 								<div class='input-group'> 
@@ -460,7 +462,7 @@
 						<div class='row form-row'>
 							<div class='col-sm-12 col-md-12 mb-6'>
 								<input type='hidden' name='action' value='changecolors'>
-								<input type='submit' class='btn btn-primary' value='Update Colors'></button>
+								<input type='submit' class='btn btn-primary' value='Update Colors'>
 								<!--input type='submit' value='Update Colors'-->
 							</div>
 						</div>

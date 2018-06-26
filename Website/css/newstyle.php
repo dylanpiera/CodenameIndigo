@@ -19,6 +19,22 @@ html, body {
     background-color: <?php echo($sidebar_bg_color);?> !important;
 }
 
+.tournament {
+    background-color: <?php echo($header_color."90");?>;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 15px;
+}
+
+.sidebar-left button {
+    border-color: <?php echo($sidebar_sbg_color);?> !important;
+    color: <?php echo($sidebar_color);?> !important;
+}
+
+.sidebar-left button:hover {
+    background-color: <?php echo($sidebar_sbg_color);?> !important;
+}
+
 .sidebar-left .sidebar-links a {
     background-color: <?php echo($sidebar_sbg_color);?> !important;
     color: <?php echo($sidebar_color);?> !important;
