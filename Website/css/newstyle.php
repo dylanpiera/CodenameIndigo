@@ -21,7 +21,6 @@ html, body {
 
 .tournament {
     background-color: <?php echo($header_color."90");?>;
-    margin-bottom: 10px;
     padding: 10px;
     border-radius: 15px;
 }

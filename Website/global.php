@@ -45,7 +45,7 @@
 				<div class="headerlogo">
 					<!--img src="https://cdn.discordapp.com/attachments/363753943555244032/439546197326430218/banner_for_DN.png"/>
 					<img src="https://cdn.discordapp.com/attachments/363753943555244032/442415452778528781/BulbaLeague_Banner___Final.png"/-->
-					<span style="text-align:center;display:block;height:300px;line-height: 300px;font-size: 4em;">Banner Space</span>
+					<span style="text-align:center;display:block;height:300px;line-height: 300px;font-size: 3em;">Banner Space</span>
 				</div>
 			</div>
 			<div class="container">
