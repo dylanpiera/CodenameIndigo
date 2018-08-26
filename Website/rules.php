@@ -15,6 +15,9 @@
 					</div>
 					<div id='collapseTarget' class='collapse show' aria-labelledby='headerTarget'>
 						<div class='card-body'>
+							<div class='alert alert-info' role='alert'>
+								E4 need to be ranked (determined before live tourney via mini-tourney.  Losers of round one fight eachother, loser of this match is #4, winner is #3.  Winners of round one fight in round two.  Loser is #2, winner is #1).
+							</div>
 							<h1>
 							Bulbaleague Staff Tourney
 							</h1>
@@ -105,6 +108,50 @@
 				<h1>
 				Bulbaleague Rules & Guidelines
 				</h1>
+				<p>
+				<b>Registration is via the bot or on the website</b>
+
+				<ul>
+					<li>OU tier</li>
+					<li>timer off for battles.</li>
+					<li>Rematch if battle ends in a draw.</li>
+				</ul>
+				
+				<b>Must register teams a week in advance</b> so we can check if they are OU.  Registration should open two weeks before tourney starts to give us enough time to check teams.<br>
+				Matchups are posted the day the tourney starts (Sunday) and people have a week and a half (following Wednesday) to do their round 1 battles.  Subsequent rounds will be one week long. <br>
+				<small><i> Opponents' teams are not visible until after registration closes for fairness. </i></small>
+				<br><br>
+				One team per person, and cannot change teams during the same tourney.  Can change teams between tournaments (but not between rounds of the same tournament).
+				<br><br>
+				Forfeits must be done by pm'ing dragon_nataku#7446, Saphir#0001, or SoaringDylan#0380. This will be an auto-win for the opponent.  If your partner fails to show up please send us a screenshot of your pm's proving you attempted to arrange a time to battle, and you'll be declared the winner.<br>
+				If both opponents fail to battle then both are disqualified.
+				<br><br>
+				Showdown replay must be submitted by BOTH participants to ensure validity.  Failure to submit your replay will lead to disqualification.
+				<br><br>
+				Odd number of participants means someone will get a bye (advance to next round without battling).  This will be randomly determined by the bot.
+				</p>
+				<h3>			
+				Format: 
+				</h3>
+				<p>
+				Regular tourney format (single elimination).  Each person is paired with an opponent, and losing opponent gets eliminated from the tourney.  This continues until there are between three 
+				and four winners.  (Victory Road)
+				<br><br>
+				These three or four people will have <b>one week</b> to fight all four Elite Four members and win.  Any losses in this round will disqualify them from fighting the Champion.<br>
+				E4 members are faced in the order of their ranking (lowest-ranked gets fought first, and so on). The rankings off which can be found in <a href='/halloffame'>the Hall of Fame.</a>  
+				<br><br>
+				Beating one E4 member will give you their spot if you don't beat the Champ.  If multiple people get stopped at the same E4 member, they fight eachother.  The winner (out of two) or 
+				top-ranked (out of 3) gets the spot if it's the lowest-ranked E4 member.  If it's a higher-ranked E4 member, slot them into the E4 based on ranking: One KO'd Pokemon means 1 point for the 
+				person who KO'd the Pokemon.
+				<br><br>
+				If multiple people beat all four E4 members, as with the previous example they all fight eachother and are ranked based on point.  Highest ranked battles the champ while the others fill 
+				the E4 slots based on their ranking.  If highest ranked fails to defeat the champ they get the top E4 slot.  If Champ loses to the challenger they gets the top E4 slot.    
+				</p>
+			</div>
+			"/*
+				<h1>
+				Bulbaleague Rules & Guidelines
+				</h1>
 				<div class='alert alert-warning'>Please note that these rules are just a mockup and are subject to change. If you're here for the staff tourney please refer to the rules above.</div>
 				<p>
 				<b>Registration is via the bot or on the website</b>
@@ -138,7 +185,8 @@
 				<br><br>
 				These three or four people will have one week to fight all four Elite Four members and win.  Any losses in this round will disqualify them from fighting the Champion.  
 				</p>
-            </div>
+			</div>*/
+			."
 		</div>
 	";
 	$pagedescription = "Registration is via the bot or on the website...";

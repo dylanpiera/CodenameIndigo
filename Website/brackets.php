@@ -48,16 +48,21 @@
 						break;
 				}
 				$round[$battle['round']] .= "
-					<td>
-						<table class='battle'>
+				<div class='col-sm-12 col-md-4 col-lg-3'>
+					<table class='table battle'>
+						<tbody>
 							<tr>
 								<td class='" . $p1class . "' title=\"" . esc($player[$battle['player1']]['showdownusername']) . "\">" . esc($player[$battle['player1']]['discordusername']) . "</td>
 							</tr>
 							<tr>
+								<td><span class='font-weight-bold'>Versus</span></td>
+							</tr>
+							<tr>
 								<td class='" . $p2class . "' title=\"" . esc($player[$battle['player2']]['showdownusername']) . "\">" . esc($player[$battle['player2']]['discordusername']) . "</td>
 							</tr>
-						</table>
-					</td>
+						</tbody>
+					</table>
+				</div>
 				";
 				$tdcount[$battle['round']]++;
 				if($tdcount[$battle['round']] == 6) {
@@ -67,17 +72,22 @@
 			}
 			ksort($round);
 			$tournamentlist .= "
-				<div class='tournament'>
-					<strong>" . $tournament['tournament'] . "</strong><br>
+			<div class='row'>
+				<div class='col-sm-12'>
+					<div class='tournament'>
+						<strong>" . $tournament['tournament'] . "</strong><br>
 			";
 			foreach($round as $roundnum => $roundbrackets) {
-				$tournamentlist .= "
-					<em>Round #" . $roundnum . "</em><br>
-					<table>
-						" . $roundbrackets . "
-					</table>
-				";
-			}
+				$tournamentlist .= "<hr>
+						<em>Round #" . $roundnum . "</em><br>
+						<div class='row justify-content-around' style='margin: 0;'>
+							" . $roundbrackets . "
+						</div>
+							";
+						}
+			$tournamentlist .="
+					</div>
+				</div>";
 		}
 	}
 	if(!isset($tournamentlist)) {
