@@ -1,5 +1,3 @@
-@import url('http://fonts.googleapis.com/css?family=Open+Sans:400,700');
-
 /* The main content */
 
 .main-content {
@@ -33,18 +31,61 @@ a {
 a:hover {
 	text-decoration: underline;
 }
+#infotext {
+	font-style: italic;
+}
 
 /* The left sidebar */
 
+/* button animation */
+
+.bar1, .bar2, .bar3 {
+    width: 20px;
+    height: 5px;
+    margin: 6px 0;
+    transition: 0.4s;
+}
+
+.change .bar1 {
+    -webkit-transform: rotate(-45deg) translate(-8px, 8px);
+    transform: rotate(-45deg) translate(-8px, 8px);
+}
+
+.change .bar2 {opacity: 0;}
+
+.change .bar3 {
+    -webkit-transform: rotate(45deg) translate(-7px, -8px);
+    transform: rotate(45deg) translate(-7px, -8px);
+}
+
+/* end of animation */
+
+@media (max-width: 768px) {
+	.collapseButton {
+		max-width: 100% !important;
+		display: block !important;
+	}
+}
+
+.collapseButton {
+	display: none;
+	max-width: 80%;
+	width: auto;
+	text-align: left;
+	margin: 0 auto 5px;
+	z-index: 100;
+	position: absolute;
+	left: 6px;
+}
+
 .sidebar-left {
-	font-family: Arial, Helvetica, sans-serif;
 	position: fixed;
 	top: 0;
 	left: 0;
 	background-color: #2A2D32;
 	width: 200px;
 	height: 100%;
-	padding: 20px 0;
+	padding: 5px 0;
 }
 
 .sidebar-left .sidebar-links {
@@ -60,7 +101,6 @@ a:hover {
 	text-align: center;
 	color:  #b3bcc5;
 	font-size: 12px;
-	font-weight: bold;
 	border-left-width: 2px;
 	border-left-style: solid;
 }
@@ -79,6 +119,31 @@ a:hover {
 	cursor: default;
 }
 
+.collapse {
+	visibility: hidden;
+  }
+  .collapse.show {
+	visibility: visible;
+	display: block;
+  }
+  .collapsing {
+	position: relative;
+	height: 0;
+	overflow: hidden;
+	-webkit-transition-property: height, visibility;
+	transition-property: height, visibility;
+	-webkit-transition-duration: 0.35s;
+	transition-duration: 0.35s;
+	-webkit-transition-timing-function: ease;
+	transition-timing-function: ease;
+  }
+  .collapsing.width {
+	-webkit-transition-property: width, visibility;
+	transition-property: width, visibility;
+	width: 0;
+	height: auto;
+  }
+
 /* Main Page */
 
 .headerlogo, .headerlogo img {
@@ -93,6 +158,55 @@ a:hover {
 	max-width: 50%;
 	display: inline-block;
 	margin: 0 -5px 0 0;
+}
+
+@media (max-width: 768px) {
+	.smallhide {
+		display: none;
+	}
+}
+@media (min-width: 768px) {
+	.smallhide {
+		display: auto;
+	}
+
+	.sidebar-left {
+		display: block !important;
+		visibility: visible !important;
+	}
+}
+
+@media (max-height: 768px) {
+	.sidebar-left .sidebar-links a {
+		padding: 6px 0;
+	}
+	.sidebar-left .sidebar-links a i.fa {
+		font-size: 20px;
+	}
+}
+
+/* Brackets */
+
+.battle {
+	background-color: rgba(255, 255, 255, 0.35) !important;
+	padding: 15px;
+	margin: 10px;
+	border-radius: 10px;
+}
+.battle td {
+	border-top: none !important;
+}
+
+.red {
+	color: red;
+	background-color: rgba(255,0,0,0.25);
+	border-radius: 10px;
+}
+
+.green {
+	color: green;
+	background-color: rgba(0,128,0,0.25);
+	border-radius: 10px;
 }
 
 /* Discord */
@@ -115,7 +229,6 @@ a:hover {
 	margin: 4px 16px 4px 4px;
 }
 .loginlink a {
-	font-family: "Gill Sans MT", sans-serif;
 	color: cyan;
 }
 
@@ -130,7 +243,13 @@ a:hover {
 	margin-top: 4px;
 }
 
+/* ACP */
 
+.card-center {
+	margin: 0 auto; /* Added */
+	float: none; /* Added */
+	margin-bottom: 10px; /* Added */
+}
 
 /* Link Colors */
 
@@ -162,6 +281,20 @@ a:hover {
 	color: #d0d237;
 }
 
+.sidebar-left .sidebar-links a.link-white {
+	border-color: #fff;
+}
+.sidebar-left .sidebar-links a.link-white i.fa {
+	color: #fff;
+}
+
+.sidebar-left .sidebar-links a.link-gray {
+	border-color: #b3bcc5;
+}
+.sidebar-left .sidebar-links a.link-gray i.fa{
+	color: #b3bcc5;
+}
+
 .sidebar-left .sidebar-links a.link-green {
 	border-color: #86be2e;
 }
@@ -185,24 +318,24 @@ a:hover {
 
 /* Making the sidebar responsive */
 
-@media (max-width: 900px) {
+@media (max-width: 768px) {
 
 	.main-content{
 		max-width: none;
-		margin: 0 0 40px;
+		margin: 0;
 	}
 
 	.sidebar-left {
 		width: auto;
 		height: auto;
 		position: inherit;
-		padding: 20px 0 0;
+		padding: 5px 0 0;
 	}
 	
 	.sidebar-left .discord,
 	.sidebar-left .sidebar-links {
 		text-align: center;
-		margin: 20px auto 0;
+		margin: 5px auto 0;
 		background-position: center;
 	}
 
@@ -218,17 +351,17 @@ a:hover {
 	}
 
 	.sidebar-left {
-		padding: 20px 0;
+		padding: 5px 0;
 	}
 
 	.sidebar-left .sidebar-links {
 		text-align: center;
-		margin: 20px auto 0;
+		margin: 5px auto 0;
 	}
 
 	.sidebar-left .sidebar-links a {
 		display: block;
-		max-width: 80%;
+		max-width: 74%;
 		width: auto;
 		text-align: left;
 		margin: 0 auto 5px;
@@ -259,6 +392,12 @@ a:hover {
 
 /*	Removing margins and paddings from the body, so that
     the sidebar takes the full height of the page */
+
+@media (min-width: 768px) {
+	.container {
+		width: 98% !important;
+	}
+}
 
 body {
 	margin: 0;

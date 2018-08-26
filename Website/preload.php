@@ -2,6 +2,7 @@
 	session_start();
 	require_once("./vendor/autoload.php");
 	require_once("./db.php");
+	require_once("BLBot/run.php");
 	
 	date_default_timezone_set("America/New_York");
 	

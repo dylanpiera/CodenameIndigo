@@ -19,6 +19,27 @@ html, body {
     background-color: <?php echo($sidebar_bg_color);?> !important;
 }
 
+.tournament {
+    background-color: <?php echo($header_color."90");?>;
+    padding: 10px;
+    border-radius: 15px;
+}
+
+.collapseButton button {
+    border-color: <?php echo($sidebar_sbg_color);?> !important;
+    color: <?php echo($sidebar_color);?> !important;
+    background-color: <?php echo($sidebar_sbg_color);?> !important;
+    box-shadow: none !important;
+}
+
+.bar1, .bar2, .bar3 {
+    background-color: <?php echo($header_color);?> !important;
+}
+
+.collapseButton button:hover {
+    background-color: <?php echo($sidebar_sbg_color);?> !important;
+}
+
 .sidebar-left .sidebar-links a {
     background-color: <?php echo($sidebar_sbg_color);?> !important;
     color: <?php echo($sidebar_color);?> !important;
