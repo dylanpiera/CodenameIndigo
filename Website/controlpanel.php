@@ -57,15 +57,21 @@
 		}
 		
 		if($action == "domanagetournament") {
-			if($_POST['subaction'] == "participant") { echo "yes";
-				$commit = $db->prepare("UPDATE participants SET showdownusername = :showdownusername, team = :team, checked = :checked WHERE pid = :pid");
+			if($_POST['subaction'] == "participant") {
+				$commit = $db->prepare("UPDATE members SET showdownusername = :showdownusername WHERE uid = :uid");
 				$commit->execute(array(
 					'showdownusername' => $_POST['showdownusername'],
+					'uid' => $_POST['uid']
+				));
+				$commit = $db->prepare("UPDATE teams SET team = :team, checked = :checked WHERE uid = :uid and tid = :tid");
+				$commit->execute(array(
 					'team' => $_POST['team'],
 					'checked' => $_POST['checked'],
-					'pid' => $_POST['pid']
+					'uid' => $_POST['uid'],
+					'tid' => $_POST['tid']
 				));
-				header('Location: ./controlpanel?action=managetournament&tid=' . $tid . '#pid' . $_POST['pid']);
+					
+				header('Location: ./controlpanel?action=managetournament&tid=' . $tid . '#uid' . $_POST['uid']);
 			}
 			elseif($_POST['subaction'] == "battle") {
 				$commit = $db->prepare("UPDATE battles SET replay1 = :replay1, replay2 = :replay2, winner = :winner WHERE bid = :bid");
@@ -251,11 +257,11 @@
 			$bgcolor = getColorFromDB("mbgcolor", $db, $uid);
 			
 			$tournament = $db->query("SELECT * FROM tournaments WHERE tid = " . $tid)->fetch();
-			$participant_q = $db->query("SELECT * FROM participants WHERE tid = " . $tid . " ORDER BY pid ASC");
+			$participant_q = $db->query("SELECT * FROM teams LEFT JOIN members ON teams.uid = members.uid WHERE tid = " . $tid . " ORDER BY regdate ASC");
 			while($participant = $participant_q->fetch()) {
 				$participantlist .= "
 				<div class='col-sm-12 col-md-5 text-center' style='background-color: ".$bgcolor."; margin: 15px; border-radius: 25px;'>
-					<form method='post' style='margin: 10px;' action='controlpanel' id='pid" . $participant['pid'] . "'>
+					<form method='post' style='margin: 10px;' action='controlpanel' id='uid" . $participant['uid'] . "'>
 						<div class='form-row'>
 							<div class='col'>
 								<div class='form-group'>
@@ -296,7 +302,7 @@
 									<input type='hidden' name='action' value='domanagetournament'>
 									<input type='hidden' name='subaction' value='participant'>
 									<input type='hidden' name='tid' value='" . $tid . "'>
-									<input type='hidden' name='pid' value='" . $participant['pid'] . "'>
+									<input type='hidden' name='uid' value='" . $participant['uid'] . "'>
 								</div>
 							</div>
 						</div>
@@ -306,7 +312,7 @@
 				$participantname[$participant['pid']] = $participant['discordusername'];
 				$participantmenu .= "
 				<li class='list-inline-item' style='margin-bottom: 5px;'>
-					<a class='btn btn-info' role='button' href='#pid" . $participant['pid'] . "'>" . $participantname[$participant['pid']] . "</a>
+					<a class='btn btn-info' role='button' href='#uid" . $participant['pid'] . "'>" . $participantname[$participant['uid']] . "</a>
 				</li>
 				";
 			}
@@ -674,7 +680,7 @@
 								<div class='form-group'>
 									<label for='closure'>Tournament Closure Date:</label> 
 									<div class='input-group date' id='closurefield' data-target-input='nearest'>
-										<input type='text' name='closure' id='closure' class='form-control datetimepicker-input' data-target='#closurefield' data-toggle='datetimepicker' placeholder='" . date('m/d/Y g:i A') . " required'/>
+										<input type='text' name='closure' id='closure' class='form-control datetimepicker-input' data-target='#closurefield' data-toggle='datetimepicker' placeholder='" . date('m/d/Y g:i A') . "' required/>
 										<span class='input-group-addon' data-target='#closurefield' data-toggle='datetimepicker'>
 											<span class='fa fa-calendar'></span>
 										</span>

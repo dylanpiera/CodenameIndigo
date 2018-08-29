@@ -16,9 +16,9 @@
 			$player = array();
 			$tdcount = array();
 			$round = array();
-			$participant_q = $db->query("SELECT * FROM participants WHERE tid = " . $tournament['tid']);
+			$participant_q = $db->query("SELECT * FROM teams LEFT JOIN members ON teams.uid = members.uid WHERE tid = " . $tournament['tid']);
 			while($participant = $participant_q->fetch()) {
-				$player[$participant['pid']] = $participant;
+				$player[$participant['uid']] = $participant;
 			}
 			$player[0] = array(
 				'discordusername' => "/ Bye /",
