@@ -39,22 +39,22 @@
 	}
 
 	function getColorFromDB(string $col, $db, $uid) {
-    try {
-        if($col_db = $db->query("SELECT * FROM `colors` WHERE `uid` = '".dbesc($uid)."'")->fetch()) {
-            $color = $col_db[$col];
-        }
-        elseif($col_db = $db->query("SELECT * FROM `colors` WHERE `uid` = '0'")->fetch()) {
-            $color = $col_db[$col];
-        }
-        else {
-            $color = "#fff";
-        }
-    }
-    catch (Exception $e) {
-        return "#fff";
-    }
-    return $color;
-}
+		try {
+			if($col_db = $db->query("SELECT * FROM `colors` WHERE `uid` = '".dbesc($uid)."'")->fetch()) {
+				$color = $col_db[$col];
+			}
+			elseif($col_db = $db->query("SELECT * FROM `colors` WHERE `uid` = '0'")->fetch()) {
+				$color = $col_db[$col];
+			}
+			else {
+				$color = "#fff";
+			}
+		}
+		catch (Exception $e) {
+			return "#fff";
+		}
+		return $color;
+	}
 	
 	include_once("./discord.php");
 ?>

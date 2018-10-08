@@ -5,10 +5,7 @@
 	$pagetitle = "Members";
 
 	//Info Banner
-	$notice = "
-    <div class='alert alert-info' role='alert'>
-		This page is still pending some updates. If you're missing badges please wait patiently!
-	</div>";
+	$notice = "";
 
 	if(isset($_GET['uid'])) {
 		$userid = $_GET['uid'];

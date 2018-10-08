@@ -27,7 +27,7 @@
 		<span class="discord">
 			<span class="accountdetails">
 				<span class="loginlink">
-					<a class="link-cyan" href="<?php if(!isset($uid)) echo($loginlink); else echo("./logout") ?>">
+					<a class="link-cyan" onClick="discordLogin('<?php if(!isset($uid)) echo($loginlink); else echo("./logout"); ?>')"  href="#">
 					<i class="fa"><img class="logoimg" src="<?php echo($avatar); ?>"/> </i>
 						<?php echo($accdetails); ?>
 				</a></span>
@@ -42,4 +42,10 @@
         <a class="link-white" href="./contact"><i class="fa fa-comment"></i>Contact Us!</a>
 		<?php if (isset($admin) || isset($skinedit)) {?><a class="link-black" href="./controlpanel"><i class="fa fa-exclamation-triangle"></i>Admin</a><?php } ?>
 	</div>
+    <script>
+        function discordLogin(link) {
+        	<?php $_SESSION['page'] = basename($_SERVER['PHP_SELF']);; ?>
+        	window.location.href = link;
+        }
+    </script>
 </aside>

@@ -7,5 +7,9 @@ $pagedescription = "Logout from the website.";
 unset($_SESSION['user']);
 session_destroy();
 
-header("Location: ./index.php");
+if(isset($_SESSION['page'])) {
+	header("Location: /".$_SESSION['page']);
+} else {
+	header("Location: ./index.php");
+}
 ?>
