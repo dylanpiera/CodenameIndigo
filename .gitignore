@@ -259,8 +259,9 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+
+# Info
 CodenameIndigo/Sneaky\.cs
-
+config.json
 Website/db\.php
-
 Website/discord\.php
