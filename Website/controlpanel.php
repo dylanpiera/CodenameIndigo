@@ -283,7 +283,7 @@
 								<input class='form-control' type='text' name='showdownusername' id='showdownusername' value=\"" . $participant['showdownusername'] . "\">
 							</div>
 							<div class='col'>
-								<label for='checked'>Team Checked:</label> 
+								<label for='checked'>Team Checked: ". ($participant['checked'] ? "<i class='fas fa-check' style='color: green;'></i>" : "<i class='fas fa-times' style='color: red;'></i>") ."</label> 
 								<input class='form-control' type='checkbox' name='checked' id='checked' value='1' " . ($participant['checked'] ? "checked" : "") . ">
 							</div>
 						</div>
@@ -312,7 +312,7 @@
 				$participantname[$participant['pid']] = $participant['discordusername'];
 				$participantmenu .= "
 				<li class='list-inline-item' style='margin-bottom: 5px;'>
-					<a class='btn btn-info' role='button' href='#uid" . $participant['pid'] . "'>" . $participantname[$participant['uid']] . "</a>
+					<a class='btn btn-info' role='button' href='#uid	" . $participant['uid'] . "'>" . $participant['discordusername'] . "</a>
 				</li>
 				";
 			}
