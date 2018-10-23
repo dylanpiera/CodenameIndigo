@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using DSharpPlus.Entities;
 using System.IO;
 
-namespace DiscordBot.Entities
+namespace IndigoBot.Entities
 {
     internal class Config
     {
@@ -22,10 +22,34 @@ namespace DiscordBot.Entities
         internal string Prefix = "'";
 
         /// <summary>
+        /// Your bot's database server adress
+        /// </summary>
+        [JsonProperty("DbServer")]
+        internal string DbServer = "192.0.0.1";
+
+        /// <summary>
+        /// Your bot's database user
+        /// </summary>
+        [JsonProperty("DbUser")]
+        internal string DbUser = "IndigoBot";
+
+        /// <summary>
+        /// Your database table
+        /// </summary>
+        [JsonProperty("DbName")]
+        internal string DbName = "league";
+
+        /// <summary>
+        /// Your bot's database user's password
+        /// </summary>
+        [JsonProperty("DbPass")]
+        internal string DbPass = "12345";
+
+        /// <summary>
         /// Your favourite color.
         /// </summary>
         [JsonProperty("color")]
-        private string _color = "#7289DA";
+        private readonly string _color = "#7289DA";
 
         /// <summary>
         /// Your favourite color exposed as a DiscordColor object.

@@ -1,4 +1,4 @@
-﻿using DiscordBot.Entities;
+﻿using IndigoBot.Entities;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using System;
@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace DiscordBot.Commands
+namespace IndigoBot.Modules.Commands
 {
     [Group("interactivity"), Hidden]
     internal class Interactivity

@@ -1,4 +1,4 @@
-﻿using DiscordBot.Entities;
+﻿using IndigoBot.Entities;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.EventArgs;
@@ -8,14 +8,14 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DiscordBot
+namespace IndigoBot
 {
     public class Bot : IDisposable
     {
         private DiscordClient _client;
         private InteractivityModule _interactivity;
         private CommandsNextModule _cnext;
-        private Config _config;
+        internal static Config _config;
         private StartTimes _starttimes;
         private CancellationTokenSource _cts;
 
@@ -55,7 +55,7 @@ namespace DiscordBot
             }
             else
             {
-                #region welcomemessage
+                #region !! Welcome Message !! (aesthetics)
                 Console.ForegroundColor = ConsoleColor.DarkCyan;
                 WriteCenter(@"  ____              _   _               _____           _ _               ____        _   ");
                 WriteCenter(@" |  _ \            | | (_)             |_   _|         | (_)             |  _ \      | |  ");
@@ -124,8 +124,9 @@ namespace DiscordBot
 
         private void RegisterCommands(CommandsNextModule cnext)
         {
-            _cnext.RegisterCommands<Commands.Owner>();
-            _cnext.RegisterCommands<Commands.Interactivity>();
+            _cnext.RegisterCommands<Modules.Commands.Owner>();
+            _cnext.RegisterCommands<Modules.Commands.Interactivity>();
+            _cnext.RegisterCommands<Modules.Commands.Signup>();
 
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             WriteCenter("Loaded commands:");
@@ -174,8 +175,12 @@ namespace DiscordBot
             {
                 Console.WriteLine();
             }
-
-            Console.SetCursorPosition((Console.WindowWidth - value.Length) / 2, Console.CursorTop);
+            try
+            {
+                Console.SetCursorPosition((Console.WindowWidth - value.Length) / 2, Console.CursorTop);
+            } catch
+            {
+            }
             Console.WriteLine(value);
         }
     }
