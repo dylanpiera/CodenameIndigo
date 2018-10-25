@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
-namespace IndigoBot.Entities
+namespace ProjectIndigoPlus.Entities
 {
     internal class Dependencies
     {

@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using DSharpPlus.Entities;
 using System.IO;
 
-namespace IndigoBot.Entities
+namespace ProjectIndigoPlus.Entities
 {
     internal class Config
     {

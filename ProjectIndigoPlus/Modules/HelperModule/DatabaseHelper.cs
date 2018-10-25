@@ -2,10 +2,13 @@ using MySql.Data.MySqlClient;
 using System;
 using System.Threading.Tasks;
 
-namespace IndigoBot.Modules.Helpers
+namespace ProjectIndigoPlus.Modules.HelperModule
 {
     public static class DatabaseHelper
     {
+        /// <summary>
+        /// Retrieves a closed copy of the global MySqlConnection
+        /// </summary>
         public static MySqlConnection GetClosedConnection()
         {
             string connStr = $"Server={Bot._config.DbServer};Uid={Bot._config.DbUser};Database={Bot._config.DbName};port=3306;Password={Bot._config.DbPass};SslMode=none;CharSet=utf8mb4";

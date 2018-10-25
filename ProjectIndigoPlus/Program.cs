@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace IndigoBot
+namespace ProjectIndigoPlus
 {
     class Program
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace IndigoBot.Entities
+namespace ProjectIndigoPlus.Entities
 {
     internal class StartTimes
     {

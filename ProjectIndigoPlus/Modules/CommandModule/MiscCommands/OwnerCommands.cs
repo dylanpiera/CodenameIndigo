@@ -1,13 +1,13 @@
-﻿using IndigoBot.Entities;
+﻿using ProjectIndigoPlus.Entities;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 using System.Threading.Tasks;
-using IndigoBot.Modules.Helpers;
+using ProjectIndigoPlus.Modules.HelperModule;
 using System.Diagnostics;
 using System;
 
-namespace IndigoBot.Modules.Commands
+namespace ProjectIndigoPlus.Modules.Commands
 {
     [Group("sudo", CanInvokeWithoutSubcommand = true), Aliases("o"), RequireOwner, Hidden]
     internal class Owner

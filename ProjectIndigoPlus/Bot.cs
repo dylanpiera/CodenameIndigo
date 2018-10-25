@@ -1,4 +1,4 @@
-﻿using IndigoBot.Entities;
+﻿using ProjectIndigoPlus.Entities;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.EventArgs;
@@ -8,7 +8,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace IndigoBot
+namespace ProjectIndigoPlus
 {
     public class Bot : IDisposable
     {
