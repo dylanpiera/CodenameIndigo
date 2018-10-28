@@ -18,6 +18,7 @@ namespace ProjectIndigoPlus
         internal static Config _config;
         private StartTimes _starttimes;
         private CancellationTokenSource _cts;
+        internal static DebugLogger DebugLogger { get; private set; }
 
         public Bot()
         {
@@ -116,6 +117,8 @@ namespace ProjectIndigoPlus
                 IgnoreExtraArguments = true,
                 Dependencies = dep
             });
+
+            DebugLogger = _client.DebugLogger;
 
             RegisterCommands(_cnext);
 
