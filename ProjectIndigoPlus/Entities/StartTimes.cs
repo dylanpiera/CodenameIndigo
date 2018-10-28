@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DiscordBot.Entities
+namespace ProjectIndigoPlus.Entities
 {
     internal class StartTimes
     {

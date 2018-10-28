@@ -1,4 +1,4 @@
-﻿using DiscordBot.Entities;
+﻿using ProjectIndigoPlus.Entities;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.EventArgs;
@@ -8,16 +8,17 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DiscordBot
+namespace ProjectIndigoPlus
 {
     public class Bot : IDisposable
     {
         private DiscordClient _client;
         private InteractivityModule _interactivity;
         private CommandsNextModule _cnext;
-        private Config _config;
+        internal static Config _config;
         private StartTimes _starttimes;
         private CancellationTokenSource _cts;
+        internal static DebugLogger DebugLogger { get; private set; }
 
         public Bot()
         {
@@ -55,7 +56,7 @@ namespace DiscordBot
             }
             else
             {
-                #region welcomemessage
+                #region !! Welcome Message !! (aesthetics)
                 Console.ForegroundColor = ConsoleColor.DarkCyan;
                 WriteCenter(@"  ____              _   _               _____           _ _               ____        _   ");
                 WriteCenter(@" |  _ \            | | (_)             |_   _|         | (_)             |  _ \      | |  ");
@@ -117,6 +118,8 @@ namespace DiscordBot
                 Dependencies = dep
             });
 
+            DebugLogger = _client.DebugLogger;
+
             RegisterCommands(_cnext);
 
             _client.Ready += OnReadyAsync;
@@ -124,8 +127,9 @@ namespace DiscordBot
 
         private void RegisterCommands(CommandsNextModule cnext)
         {
-            _cnext.RegisterCommands<Commands.Owner>();
-            _cnext.RegisterCommands<Commands.Interactivity>();
+            _cnext.RegisterCommands<Modules.Commands.Owner>();
+            _cnext.RegisterCommands<Modules.Commands.Interactivity>();
+            _cnext.RegisterCommands<Modules.Commands.Signup>();
 
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             WriteCenter("Loaded commands:");
@@ -174,8 +178,12 @@ namespace DiscordBot
             {
                 Console.WriteLine();
             }
-
-            Console.SetCursorPosition((Console.WindowWidth - value.Length) / 2, Console.CursorTop);
+            try
+            {
+                Console.SetCursorPosition((Console.WindowWidth - value.Length) / 2, Console.CursorTop);
+            } catch
+            {
+            }
             Console.WriteLine(value);
         }
     }
