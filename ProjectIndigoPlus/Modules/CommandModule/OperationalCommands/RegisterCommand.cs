@@ -15,10 +15,10 @@ using System.Threading.Tasks;
 
 namespace ProjectIndigoPlus.Modules.Commands
 {
-    internal class Signup
+    internal class Register
     {
-        private Dependencies dep;
-        public Signup(Dependencies d)
+        private readonly Dependencies dep;
+        public Register(Dependencies d)
         {
             dep = d;
         }
@@ -269,7 +269,7 @@ namespace ProjectIndigoPlus.Modules.Commands
             }
             catch (Exception e)
             {
-                Bot.DebugLogger.LogMessage(DSharpPlus.LogLevel.Critical, "" + "", e.ToString(), DateTime.Now);
+                Bot.DebugLogger.LogMessage(DSharpPlus.LogLevel.Critical, "Registration Tournament Retrieval" + "", e.ToString(), DateTime.Now);
             }
             finally
             {
@@ -425,7 +425,8 @@ namespace ProjectIndigoPlus.Modules.Commands
                     {
                         Color = DiscordColor.Red,
                         Title = "Wrong File",
-                        Description = "It appears the file you send me isn't a safe file. Please send me your team as a .txt or send the team as a discord message!"
+                        Description = "It appears the file you send me isn't a safe file. Please send me your team as a .txt or send the team as a discord message!",
+                        Footer = new DiscordEmbedBuilder.EmbedFooter() { Text = @"The default showdown team storage location for the desktop application is `C:\Users\{your user}\documents\My Games\Pokemon Showdown\Teams`" }
                     });
                     goto RetryTeam;
                 }
