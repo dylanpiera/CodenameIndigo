@@ -10,6 +10,27 @@ namespace ProjectIndigoPlus.Entities
     internal class Config
     {
         /// <summary>
+        /// Make the bot instead load data from this CS file instead of config.json
+        /// </summary>
+        public static readonly bool UseFile = true;
+
+        /// <summary>
+        /// If you'd rather use this CS file as config than json fill in the details here and set UseFile to false.
+        /// </summary>
+        internal static Config LoadFromCS()
+        {
+            return new Config
+            {
+                Token = "",
+                DbName = "",
+                DbUser = "",
+                DbPass = "",
+                DbServer = "",
+                Prefix = ""
+            };
+        }
+
+        /// <summary>
         /// Your bot's token.
         /// </summary>
         [JsonProperty("token")]

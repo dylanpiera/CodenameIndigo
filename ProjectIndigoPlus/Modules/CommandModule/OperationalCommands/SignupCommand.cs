@@ -307,10 +307,6 @@ namespace ProjectIndigoPlus.Modules.Commands
             RetryPicker:
             MessageContext ctx = await dep.Interactivity.WaitForMessageAsync(x =>
             {
-                Bot.DebugLogger.LogMessage(DSharpPlus.LogLevel.Debug, "Tournament Selector", $"CID: {x.Channel.Id} == {channel.Id}\n" +
-                    $"AID: {x.Author.Id} == {context.User.Id}\n" +
-                    $"REGEX: {x.Content} == {Regex.IsMatch(x.Content, @"/^\d+$/").ToString()}", DateTime.Now);
-
                 return x.Channel.Id == channel.Id &&
                 x.Author.Id == context.User.Id &&
                 Regex.IsMatch(x.Content, @"^\d+$");
@@ -530,8 +526,6 @@ namespace ProjectIndigoPlus.Modules.Commands
             try
             {
                 await conn.OpenAsync();
-
-                Bot.DebugLogger.LogMessage(DSharpPlus.LogLevel.Debug, "CheckUserInDatabase", context.User.Id + "", DateTime.Now);
 
                 string cmdString = "SELECT COUNT(uid),`showdownusername` FROM `members` WHERE `uid` = @uid";
                 MySqlCommand cmd = new MySqlCommand(cmdString, conn);
