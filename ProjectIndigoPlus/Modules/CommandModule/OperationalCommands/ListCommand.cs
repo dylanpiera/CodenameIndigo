@@ -71,7 +71,7 @@ namespace ProjectIndigoPlus.Modules.Commands
 
             DiscordEmbedBuilder players = new DiscordEmbedBuilder()
             {
-                Title = $"Player List for the {tourney.Name}",
+                Title = $"Player List for {tourney.Name}",
                 Color = Bot._config.Color,
                 Description = $"The participating discord player names are as followed:\n\n",
                 Footer = new DiscordEmbedBuilder.EmbedFooter()

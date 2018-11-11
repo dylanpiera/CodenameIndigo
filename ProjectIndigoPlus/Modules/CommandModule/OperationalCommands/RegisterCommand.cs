@@ -31,6 +31,14 @@ namespace ProjectIndigoPlus.Modules.Commands
             DiscordChannel channel;
             if (!context.Channel.IsPrivate)
             {
+                try
+                {
+                    await context.Message.CreateReactionAsync(DiscordEmoji.FromName(context.Client, ":white_check_mark:"));
+                }
+                catch (Exception e)
+                {
+                    context.Client.DebugLogger.LogMessage(DSharpPlus.LogLevel.Critical, "Signup Command", e.ToString(), DateTime.Now);
+                }
                 context.RespondAndDelete(new DiscordEmbedBuilder()
                 {
                     Color = Bot._config.Color,
@@ -161,7 +169,7 @@ namespace ProjectIndigoPlus.Modules.Commands
                         string cmdString = "UPDATE `members` SET `discordusername`=@discordusername,`showdownusername`=@showdownusername,`avatar`=@avatar WHERE `uid` = @uid";
                         MySqlCommand cmd = new MySqlCommand(cmdString, conn);
                         cmd.Parameters.Add("uid", MySqlDbType.UInt64).Value = context.User.Id;
-                        cmd.Parameters.Add("discordusername", MySqlDbType.VarChar).Value = context.User.Username;
+                        cmd.Parameters.Add("discordusername", MySqlDbType.VarChar).Value = context.User.Username + "#" + context.User.Discriminator;
                         cmd.Parameters.Add("showdownusername", MySqlDbType.VarChar).Value = newUsername;
                         cmd.Parameters.Add("avatar", MySqlDbType.VarChar).Value = context.User.GetAvatarUrl(DSharpPlus.ImageFormat.Gif);
 
@@ -198,7 +206,7 @@ namespace ProjectIndigoPlus.Modules.Commands
                         string cmdString = "INSERT INTO `members`(`uid`, `discordusername`, `showdownusername`, `avatar`) VALUES (@uid,@discordname,@showdownusername,@avatar)";
                         MySqlCommand cmd = new MySqlCommand(cmdString, conn);
                         cmd.Parameters.Add("uid", MySqlDbType.UInt64).Value = context.User.Id;
-                        cmd.Parameters.Add("discordusername", MySqlDbType.VarChar).Value = context.User.Username;
+                        cmd.Parameters.Add("discordusername", MySqlDbType.VarChar).Value = context.User.Username + "#" + context.User.Discriminator;
                         cmd.Parameters.Add("showdownusername", MySqlDbType.VarChar).Value = newUsername;
                         cmd.Parameters.Add("avatar", MySqlDbType.VarChar).Value = context.User.GetAvatarUrl(DSharpPlus.ImageFormat.Gif);
 
@@ -366,7 +374,7 @@ namespace ProjectIndigoPlus.Modules.Commands
             }
             else if (registeredTournaments.ContainsKey(tid))
             {
-                EditRegistration.EditRegistration(context, channel, tid);
+                await EditRegistration.EditRegistrationAsync(context, dep, channel, registeredTournaments[tid], showdownusername);
             }
 
             DiscordMessage confirmMessage = await channel.SendMessageAsync("", false, new DiscordEmbedBuilder()
@@ -414,6 +422,16 @@ namespace ProjectIndigoPlus.Modules.Commands
             RetryTeam:
             string team = "";
             MessageContext teamMessage = await dep.Interactivity.WaitForMessageAsync(x => x.Author.Id == context.User.Id && x.Channel.Id == channel.Id);
+            if (teamMessage == null)
+            {
+                await channel.SendMessageAsync("", false, new DiscordEmbedBuilder()
+                {
+                    Color = DiscordColor.Red,
+                    Title = "Team Registration",
+                    Description = $"It appears I lost you :cry:\n To restart type `{Bot._config.Prefix + context.Command.Name}`"
+                });
+                return;
+            }
             if (teamMessage.Message.Attachments.Count > 0)
             {
                 DiscordAttachment attachment = teamMessage.Message.Attachments[0];
@@ -505,16 +523,16 @@ namespace ProjectIndigoPlus.Modules.Commands
             {
                 #region !! Save registration to Database !!
 
-                await conn.OpenAsync();
-
-                string cmdString = $"INSERT INTO `teams`(`uid`, `tid`, `team`, `regdate`) VALUES (@uid,@tid,@team,{DateTimeOffset.Now.ToUnixTimeSeconds()})";
-                MySqlCommand cmd = new MySqlCommand(cmdString, conn);
-                cmd.Parameters.Add("uid", MySqlDbType.UInt64).Value = context.User.Id;
-                cmd.Parameters.Add("tid", MySqlDbType.UInt32).Value = tid;
-                cmd.Parameters.Add("team", MySqlDbType.Text).Value = team;
-
                 try
                 {
+                    await conn.OpenAsync();
+
+                    string cmdString = $"INSERT INTO `teams`(`uid`, `tid`, `team`, `regdate`) VALUES (@uid,@tid,@team,{DateTimeOffset.Now.ToUnixTimeSeconds()})";
+                    MySqlCommand cmd = new MySqlCommand(cmdString, conn);
+                    cmd.Parameters.Add("uid", MySqlDbType.UInt64).Value = context.User.Id;
+                    cmd.Parameters.Add("tid", MySqlDbType.UInt32).Value = tid;
+                    cmd.Parameters.Add("team", MySqlDbType.Text).Value = team;
+
                     await cmd.ExecuteNonQueryAsync();
                 }
                 catch (Exception e)
@@ -536,7 +554,7 @@ namespace ProjectIndigoPlus.Modules.Commands
                     Title = "Signup Complete!",
                     Description = $"Awesome, {context.User.Username}!\nThank you for signing up!\n\n" +
                     $"I will let you know when the tournament begins and give you information from there!\n" +
-                    $"If you'd like to change your entry. Please visit our website https://bulbaleague.soaringnetwork.com \n\n" +
+                    $"You can edit your signup by calling this command again!" +
                     $"Good luck, and keep fighting!"
                 });
             }
@@ -547,7 +565,7 @@ namespace ProjectIndigoPlus.Modules.Commands
         /// </summary>
         /// <param name="context">Command Context</param>
         /// <returns>true/false wheter use exists in database</returns>
-        public async Task<(SuccessValue, string)> CheckUserInDatabase(CommandContext context)
+        public static async Task<(SuccessValue, string)> CheckUserInDatabase(CommandContext context)
         {
             SuccessValue response = SuccessValue.error;
             MySqlConnection conn = DatabaseHelper.GetClosedConnection();
