@@ -1,7 +1,3 @@
-using DSharpPlus;
-using Humanizer;
-using System;
-
 namespace ProjectIndigoPlus.Modules.HelperModule
 {
     public class EmojiHelper

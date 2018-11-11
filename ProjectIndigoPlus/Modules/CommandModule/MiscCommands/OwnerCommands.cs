@@ -30,6 +30,12 @@ namespace ProjectIndigoPlus.Modules.Commands
             dep.Cts.Cancel();
         }
 
+        [Command("relay")]
+        public async Task RelayAsync(CommandContext ctx, ulong channel, [RemainingText] string msg)
+        {
+            await (await ctx.Client.GetChannelAsync(channel)).SendMessageAsync(msg);
+        }
+
         [Command("testcon")]
         public async Task TestConnAsync(CommandContext context)
         {
