@@ -28,6 +28,7 @@ namespace ProjectIndigoPlus.Modules.Commands
             DiscordChannel channel;
             if (!context.Channel.IsPrivate)
             {
+                await context.Message.CreateReactionAsync(DiscordEmoji.FromName(context.Client, ":white_check_mark:"));
                 context.RespondAndDelete(new DiscordEmbedBuilder()
                 {
                     Color = Bot._config.Color,

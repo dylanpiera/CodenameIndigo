@@ -1,4 +1,5 @@
 using MySql.Data.MySqlClient;
+using ProjectIndigoPlus.Modules.ModelModule;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -15,6 +16,44 @@ namespace ProjectIndigoPlus.Modules.HelperModule
             string connStr = $"Server={Bot._config.DbServer};Uid={Bot._config.DbUser};Database={Bot._config.DbName};port=3306;Password={Bot._config.DbPass};SslMode=none;CharSet=utf8mb4";
             MySqlConnection conn = new MySqlConnection(connStr) { };
             return conn;
+        }
+
+        public static async Task<TourneyModel> GetLatestTourneyAsync(this MySqlConnection conn)
+        {
+            TourneyModel tourney = null;
+            try
+            {
+                await conn.OpenAsync();
+                string commandstring = "SELECT `tid`,`tournament`,`regstart`,`regend`,`closure`,`maxplayers`,`minplayers` FROM `tournaments` ORDER BY `tid` DESC LIMIT 0,1";
+                MySqlCommand cmd = new MySqlCommand(commandstring, conn);
+                using (MySqlDataReader reader = (MySqlDataReader)await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        tourney = new TourneyModel()
+                        {
+                            Tid = reader.GetInt32("tid"),
+                            Name = reader.GetString("tournament"),
+                            RegStart = DateTimeOffset.FromUnixTimeSeconds(reader.GetInt64("regstart")),
+                            RegEnd = DateTimeOffset.FromUnixTimeSeconds(reader.GetInt64("regend")),
+                            Closure = DateTimeOffset.FromUnixTimeSeconds(reader.GetInt64("closure")),
+                            MaxPlayers = reader.GetInt32("maxplayers"),
+                            MinPlayers = reader.GetInt32("minplayers")
+                        };
+                    }
+                }
+
+            }
+            catch (Exception e)
+            {
+                Bot.DebugLogger.LogMessage(DSharpPlus.LogLevel.Critical, "GetLatestTourneyAsync", e.ToString(), DateTime.Now);
+                return null;
+            }
+            finally
+            {
+                await conn.CloseAsync();
+            }
+            return tourney;
         }
 
         /// <summary>
@@ -53,43 +92,51 @@ namespace ProjectIndigoPlus.Modules.HelperModule
             return dictionary;
         }
 
-        /*public static async Task<Tourney> GetTourneyByIDAsync(int id)
+        public static async Task<(bool, TourneyModel)> GetTourneyByIDAsync(this MySqlConnection conn, int id)
         {
-            Tourney tourney = new Tourney();
-
-            MySqlConnection conn = DatabaseHelper.GetClosedConnection();
+            TourneyModel tourney = null;
+            bool success = false;
             try
             {
                 await conn.OpenAsync();
 
-                MySqlCommand cmd = new MySqlCommand("SELECT * FROM `tournaments` WHERE `tid` = " + id, conn);
+                MySqlCommand cmd = new MySqlCommand("SELECT `tid`,`tournament`,`regstart`,`regend`,`closure`,`maxplayers`,`minplayers`,COUNT(`tid`) as Amount FROM `tournaments` WHERE `tid` = 20" + id, conn);
 
                 using (MySqlDataReader reader = (MySqlDataReader)await cmd.ExecuteReaderAsync())
                 {
                     while (await reader.ReadAsync())
                     {
-                        tourney.ID = reader.GetInt32("tid");
-                        tourney.Name = reader.GetString("tournament");
-                        tourney.Regstart = reader.GetInt32("regstart");
-                        tourney.Regend = reader.GetInt32("regend");
-                        tourney.MinPlayers = reader.GetInt32("minplayers");
-                        tourney.MaxPlayers = reader.GetInt32("maxplayers");
+                        if (reader.GetInt32("Amount") > 0)
+                        {
+                            tourney = new TourneyModel()
+                            {
+                                Tid = reader.GetInt32("tid"),
+                                Name = reader.GetString("tournament"),
+                                RegStart = DateTimeOffset.FromUnixTimeSeconds(reader.GetInt64("regstart")),
+                                RegEnd = DateTimeOffset.FromUnixTimeSeconds(reader.GetInt64("regend")),
+                                Closure = DateTimeOffset.FromUnixTimeSeconds(reader.GetInt64("closure")),
+                                MaxPlayers = reader.GetInt32("maxplayers"),
+                                MinPlayers = reader.GetInt32("minplayers")
+                            };
+                            success = true;
+                        }
                     }
                 }
             }
             catch (Exception e)
             {
-                await Program.Log(e.ToString(), "GetTourneyByID => SQL", LogSeverity.Error);
+                Bot.DebugLogger.LogMessage(DSharpPlus.LogLevel.Critical, "GetTourneyByID", e.ToString(), DateTime.Now);
+                return (false, null);
             }
             finally
             {
                 await conn.CloseAsync();
             }
 
-            return tourney;
+            return (success, tourney);
         }
 
-        public static async Task<Tourney> GetLatestTourneyAsync()
+        /*public static async Task<Tourney> GetLatestTourneyAsync()
         {
             Tourney tourney = new Tourney();
 

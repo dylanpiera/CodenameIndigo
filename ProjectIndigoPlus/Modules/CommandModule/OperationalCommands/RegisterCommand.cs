@@ -31,6 +31,14 @@ namespace ProjectIndigoPlus.Modules.Commands
             DiscordChannel channel;
             if (!context.Channel.IsPrivate)
             {
+                try
+                {
+                    await context.Message.CreateReactionAsync(DiscordEmoji.FromName(context.Client, ":white_check_mark:"));
+                }
+                catch (Exception e)
+                {
+                    context.Client.DebugLogger.LogMessage(DSharpPlus.LogLevel.Critical, "Signup Command", e.ToString(), DateTime.Now);
+                }
                 context.RespondAndDelete(new DiscordEmbedBuilder()
                 {
                     Color = Bot._config.Color,
@@ -94,7 +102,7 @@ namespace ProjectIndigoPlus.Modules.Commands
                 });
                 return;
             }
-            else if(msg.Message.Content.ToLower() == "exit")
+            else if (msg.Message.Content.ToLower() == "exit")
             {
                 return;
             }
@@ -161,7 +169,7 @@ namespace ProjectIndigoPlus.Modules.Commands
                         string cmdString = "UPDATE `members` SET `discordusername`=@discordusername,`showdownusername`=@showdownusername,`avatar`=@avatar WHERE `uid` = @uid";
                         MySqlCommand cmd = new MySqlCommand(cmdString, conn);
                         cmd.Parameters.Add("uid", MySqlDbType.UInt64).Value = context.User.Id;
-                        cmd.Parameters.Add("discordusername", MySqlDbType.VarChar).Value = context.User.Username;
+                        cmd.Parameters.Add("discordusername", MySqlDbType.VarChar).Value = context.User.Username + "#" + context.User.Discriminator;
                         cmd.Parameters.Add("showdownusername", MySqlDbType.VarChar).Value = newUsername;
                         cmd.Parameters.Add("avatar", MySqlDbType.VarChar).Value = context.User.GetAvatarUrl(DSharpPlus.ImageFormat.Gif);
 
@@ -198,7 +206,7 @@ namespace ProjectIndigoPlus.Modules.Commands
                         string cmdString = "INSERT INTO `members`(`uid`, `discordusername`, `showdownusername`, `avatar`) VALUES (@uid,@discordname,@showdownusername,@avatar)";
                         MySqlCommand cmd = new MySqlCommand(cmdString, conn);
                         cmd.Parameters.Add("uid", MySqlDbType.UInt64).Value = context.User.Id;
-                        cmd.Parameters.Add("discordusername", MySqlDbType.VarChar).Value = context.User.Username;
+                        cmd.Parameters.Add("discordusername", MySqlDbType.VarChar).Value = context.User.Username + "#" + context.User.Discriminator;
                         cmd.Parameters.Add("showdownusername", MySqlDbType.VarChar).Value = newUsername;
                         cmd.Parameters.Add("avatar", MySqlDbType.VarChar).Value = context.User.GetAvatarUrl(DSharpPlus.ImageFormat.Gif);
 
@@ -230,7 +238,8 @@ namespace ProjectIndigoPlus.Modules.Commands
             Success:
 
             /// Checks what tourneys are open for signups
-            Dictionary<int, TourneyModel> tournaments = new Dictionary<int, TourneyModel>();
+            Dictionary<int, TourneyModel> openTournaments = new Dictionary<int, TourneyModel>();
+            Dictionary<int, TourneyModel> registeredTournaments = new Dictionary<int, TourneyModel>();
 
             #region !! Retrieve tournaments from Database !!
             try
@@ -244,7 +253,7 @@ namespace ProjectIndigoPlus.Modules.Commands
 
                     while (await reader.ReadAsync())
                     {
-                        tournaments.Add(reader.GetInt32("tid"), new TourneyModel()
+                        openTournaments.Add(reader.GetInt32("tid"), new TourneyModel()
                         {
                             Tid = reader.GetInt32("tid"),
                             Name = reader.GetString("tournament"),
@@ -257,13 +266,24 @@ namespace ProjectIndigoPlus.Modules.Commands
                     }
                 }
 
-                cmd = new MySqlCommand($"SELECT `tid` FROM `teams` WHERE `uid` = {context.User.Id}", conn);
+                cmd = new MySqlCommand($"SELECT `tournaments`.`tid`,`tournaments`.`tournament`,`tournaments`.`regstart`,`tournaments`.`regend`,`tournaments`.`closure`,`tournaments`.`maxplayers`,`tournaments`.`minplayers` FROM `tournaments` LEFT JOIN `teams` ON `tournaments`.`tid` = `teams`.`tid` WHERE `teams`.`uid` = {context.User.Id} AND `regstart` <= {DateTimeOffset.Now.ToUnixTimeSeconds()} AND `regend` >= {DateTimeOffset.Now.ToUnixTimeSeconds()} ORDER BY `tournaments`.`tid` DESC", conn);
 
                 using (MySqlDataReader reader = (MySqlDataReader)await cmd.ExecuteReaderAsync())
                 {
                     while (await reader.ReadAsync())
                     {
-                        tournaments.Remove(reader.GetInt32("tid"));
+                        registeredTournaments.Add(reader.GetInt32("tid"), openTournaments.GetValueOrDefault(reader.GetInt32("tid")));
+                        openTournaments.Remove(reader.GetInt32("tid"));
+                        /*registeredTournaments.Add(reader.GetInt32("tid"), new TourneyModel()
+                        {
+                            Tid = reader.GetInt32("tid"),
+                            Name = reader.GetString("tournament"),
+                            RegStart = DateTimeOffset.FromUnixTimeSeconds(reader.GetInt64("regstart")),
+                            RegEnd = DateTimeOffset.FromUnixTimeSeconds(reader.GetInt64("regend")),
+                            Closure = DateTimeOffset.FromUnixTimeSeconds(reader.GetInt64("closure")),
+                            MaxPlayers = reader.GetInt32("maxplayers"),
+                            MinPlayers = reader.GetInt32("minplayers")
+                        });*/
                     }
                 }
             }
@@ -277,7 +297,7 @@ namespace ProjectIndigoPlus.Modules.Commands
             }
             #endregion
 
-            if (tournaments.Count == 0)
+            if (openTournaments.Count == 0 && registeredTournaments.Count == 0)
             {
                 await channel.SendMessageAsync("", false, new DiscordEmbedBuilder()
                 {
@@ -293,13 +313,26 @@ namespace ProjectIndigoPlus.Modules.Commands
             {
                 Color = Bot._config.Color,
                 Title = "Pick a tournament",
-                Description = "The following tourneys are open for signups:\n\n",
                 Footer = new DiscordEmbedBuilder.EmbedFooter() { Text = "Please select a tournament by sending its number!" }
             };
 
-            foreach (TourneyModel tourney in tournaments.Values)
+            if (openTournaments.Count > 0)
             {
-                builder.Description += $"{tourney.Tid}. {tourney.Name} - [{tourney.PlayerCount}/{tourney.MaxPlayers}]\n";
+                builder.Description = "The following tourneys are open for signups:\n\n";
+                foreach (TourneyModel tourney in openTournaments.Values)
+                {
+                    builder.Description += $"{tourney.Tid}. {tourney.Name} - [{tourney.PlayerCount}/{tourney.MaxPlayers}]\n";
+                }
+            }
+
+            if (registeredTournaments.Count > 0)
+            {
+                builder.Description += "\nYou have already signed up for the following tournaments, you can edit your team by selecting any of them.\n\n";
+
+                foreach (TourneyModel tourney in registeredTournaments.Values)
+                {
+                    builder.Description += $"{tourney.Tid}. {tourney.Name} - [{tourney.PlayerCount}/{tourney.MaxPlayers}]\n";
+                }
             }
 
             await channel.SendMessageAsync("", false, builder.Build());
@@ -322,14 +355,14 @@ namespace ProjectIndigoPlus.Modules.Commands
                 });
                 return;
             }
-            else if(ctx.Message.Content.ToLower() == "exit")
+            else if (ctx.Message.Content.ToLower() == "exit")
             {
                 return;
             }
 
             int.TryParse(ctx.Message.Content, out tid);
 
-            if (!tournaments.ContainsKey(tid))
+            if (!openTournaments.ContainsKey(tid) && !registeredTournaments.ContainsKey(tid))
             {
                 await channel.SendMessageAsync("", false, new DiscordEmbedBuilder()
                 {
@@ -339,12 +372,16 @@ namespace ProjectIndigoPlus.Modules.Commands
                 });
                 goto RetryPicker;
             }
+            else if (registeredTournaments.ContainsKey(tid))
+            {
+                await EditRegistration.EditRegistrationAsync(context, dep, channel, registeredTournaments[tid], showdownusername);
+            }
 
             DiscordMessage confirmMessage = await channel.SendMessageAsync("", false, new DiscordEmbedBuilder()
             {
                 Color = Bot._config.Color,
                 Title = "Tourney Signup",
-                Description = $"Cool! Let's signup for the {tournaments[tid].Name}!\n\n" +
+                Description = $"Cool! Let's signup for the {openTournaments[tid].Name}!\n\n" +
                 $"First, let me confirm your showdown name, is it still {showdownusername}?"
             });
 
@@ -385,6 +422,16 @@ namespace ProjectIndigoPlus.Modules.Commands
             RetryTeam:
             string team = "";
             MessageContext teamMessage = await dep.Interactivity.WaitForMessageAsync(x => x.Author.Id == context.User.Id && x.Channel.Id == channel.Id);
+            if (teamMessage == null)
+            {
+                await channel.SendMessageAsync("", false, new DiscordEmbedBuilder()
+                {
+                    Color = DiscordColor.Red,
+                    Title = "Team Registration",
+                    Description = $"It appears I lost you :cry:\n To restart type `{Bot._config.Prefix + context.Command.Name}`"
+                });
+                return;
+            }
             if (teamMessage.Message.Attachments.Count > 0)
             {
                 DiscordAttachment attachment = teamMessage.Message.Attachments[0];
@@ -431,13 +478,13 @@ namespace ProjectIndigoPlus.Modules.Commands
                     goto RetryTeam;
                 }
             }
-            else if(teamMessage.Message.Content.ToLower() == "exit")
+            else if (teamMessage.Message.Content.ToLower() == "exit")
             {
                 return;
             }
             if (string.IsNullOrEmpty(team))
             {
-                team = teamMessage.Message.Content.Replace('`',' ').Trim();
+                team = teamMessage.Message.Content.Replace('`', ' ').Trim();
             }
 
             DiscordMessage teamConfirmMessage = await channel.SendMessageAsync("", false, new DiscordEmbedBuilder()
@@ -476,16 +523,16 @@ namespace ProjectIndigoPlus.Modules.Commands
             {
                 #region !! Save registration to Database !!
 
-                await conn.OpenAsync();
-
-                string cmdString = $"INSERT INTO `teams`(`uid`, `tid`, `team`, `regdate`) VALUES (@uid,@tid,@team,{DateTimeOffset.Now.ToUnixTimeSeconds()})";
-                MySqlCommand cmd = new MySqlCommand(cmdString, conn);
-                cmd.Parameters.Add("uid", MySqlDbType.UInt64).Value = context.User.Id;
-                cmd.Parameters.Add("tid", MySqlDbType.UInt32).Value = tid;
-                cmd.Parameters.Add("team", MySqlDbType.Text).Value = team;
-
                 try
                 {
+                    await conn.OpenAsync();
+
+                    string cmdString = $"INSERT INTO `teams`(`uid`, `tid`, `team`, `regdate`) VALUES (@uid,@tid,@team,{DateTimeOffset.Now.ToUnixTimeSeconds()})";
+                    MySqlCommand cmd = new MySqlCommand(cmdString, conn);
+                    cmd.Parameters.Add("uid", MySqlDbType.UInt64).Value = context.User.Id;
+                    cmd.Parameters.Add("tid", MySqlDbType.UInt32).Value = tid;
+                    cmd.Parameters.Add("team", MySqlDbType.Text).Value = team;
+
                     await cmd.ExecuteNonQueryAsync();
                 }
                 catch (Exception e)
@@ -507,7 +554,7 @@ namespace ProjectIndigoPlus.Modules.Commands
                     Title = "Signup Complete!",
                     Description = $"Awesome, {context.User.Username}!\nThank you for signing up!\n\n" +
                     $"I will let you know when the tournament begins and give you information from there!\n" +
-                    $"If you'd like to change your entry. Please visit our website https://bulbaleague.soaringnetwork.com \n\n" +
+                    $"You can edit your signup by calling this command again!" +
                     $"Good luck, and keep fighting!"
                 });
             }
@@ -518,7 +565,7 @@ namespace ProjectIndigoPlus.Modules.Commands
         /// </summary>
         /// <param name="context">Command Context</param>
         /// <returns>true/false wheter use exists in database</returns>
-        public async Task<(SuccessValue, string)> CheckUserInDatabase(CommandContext context)
+        public static async Task<(SuccessValue, string)> CheckUserInDatabase(CommandContext context)
         {
             SuccessValue response = SuccessValue.error;
             MySqlConnection conn = DatabaseHelper.GetClosedConnection();
