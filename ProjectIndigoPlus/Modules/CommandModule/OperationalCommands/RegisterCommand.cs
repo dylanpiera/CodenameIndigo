@@ -94,7 +94,7 @@ namespace ProjectIndigoPlus.Modules.Commands
                 });
                 return;
             }
-            else if(msg.Message.Content.ToLower() == "exit")
+            else if (msg.Message.Content.ToLower() == "exit")
             {
                 return;
             }
@@ -230,7 +230,8 @@ namespace ProjectIndigoPlus.Modules.Commands
             Success:
 
             /// Checks what tourneys are open for signups
-            Dictionary<int, TourneyModel> tournaments = new Dictionary<int, TourneyModel>();
+            Dictionary<int, TourneyModel> openTournaments = new Dictionary<int, TourneyModel>();
+            Dictionary<int, TourneyModel> registeredTournaments = new Dictionary<int, TourneyModel>();
 
             #region !! Retrieve tournaments from Database !!
             try
@@ -244,7 +245,7 @@ namespace ProjectIndigoPlus.Modules.Commands
 
                     while (await reader.ReadAsync())
                     {
-                        tournaments.Add(reader.GetInt32("tid"), new TourneyModel()
+                        openTournaments.Add(reader.GetInt32("tid"), new TourneyModel()
                         {
                             Tid = reader.GetInt32("tid"),
                             Name = reader.GetString("tournament"),
@@ -257,13 +258,24 @@ namespace ProjectIndigoPlus.Modules.Commands
                     }
                 }
 
-                cmd = new MySqlCommand($"SELECT `tid` FROM `teams` WHERE `uid` = {context.User.Id}", conn);
+                cmd = new MySqlCommand($"SELECT `tournaments`.`tid`,`tournaments`.`tournament`,`tournaments`.`regstart`,`tournaments`.`regend`,`tournaments`.`closure`,`tournaments`.`maxplayers`,`tournaments`.`minplayers` FROM `tournaments` LEFT JOIN `teams` ON `tournaments`.`tid` = `teams`.`tid` WHERE `teams`.`uid` = {context.User.Id} AND `regstart` <= {DateTimeOffset.Now.ToUnixTimeSeconds()} AND `regend` >= {DateTimeOffset.Now.ToUnixTimeSeconds()} ORDER BY `tournaments`.`tid` DESC", conn);
 
                 using (MySqlDataReader reader = (MySqlDataReader)await cmd.ExecuteReaderAsync())
                 {
                     while (await reader.ReadAsync())
                     {
-                        tournaments.Remove(reader.GetInt32("tid"));
+                        registeredTournaments.Add(reader.GetInt32("tid"), openTournaments.GetValueOrDefault(reader.GetInt32("tid")));
+                        openTournaments.Remove(reader.GetInt32("tid"));
+                        /*registeredTournaments.Add(reader.GetInt32("tid"), new TourneyModel()
+                        {
+                            Tid = reader.GetInt32("tid"),
+                            Name = reader.GetString("tournament"),
+                            RegStart = DateTimeOffset.FromUnixTimeSeconds(reader.GetInt64("regstart")),
+                            RegEnd = DateTimeOffset.FromUnixTimeSeconds(reader.GetInt64("regend")),
+                            Closure = DateTimeOffset.FromUnixTimeSeconds(reader.GetInt64("closure")),
+                            MaxPlayers = reader.GetInt32("maxplayers"),
+                            MinPlayers = reader.GetInt32("minplayers")
+                        });*/
                     }
                 }
             }
@@ -277,7 +289,7 @@ namespace ProjectIndigoPlus.Modules.Commands
             }
             #endregion
 
-            if (tournaments.Count == 0)
+            if (openTournaments.Count == 0 && registeredTournaments.Count == 0)
             {
                 await channel.SendMessageAsync("", false, new DiscordEmbedBuilder()
                 {
@@ -293,13 +305,26 @@ namespace ProjectIndigoPlus.Modules.Commands
             {
                 Color = Bot._config.Color,
                 Title = "Pick a tournament",
-                Description = "The following tourneys are open for signups:\n\n",
                 Footer = new DiscordEmbedBuilder.EmbedFooter() { Text = "Please select a tournament by sending its number!" }
             };
 
-            foreach (TourneyModel tourney in tournaments.Values)
+            if (openTournaments.Count > 0)
             {
-                builder.Description += $"{tourney.Tid}. {tourney.Name} - [{tourney.PlayerCount}/{tourney.MaxPlayers}]\n";
+                builder.Description = "The following tourneys are open for signups:\n\n";
+                foreach (TourneyModel tourney in openTournaments.Values)
+                {
+                    builder.Description += $"{tourney.Tid}. {tourney.Name} - [{tourney.PlayerCount}/{tourney.MaxPlayers}]\n";
+                }
+            }
+
+            if (registeredTournaments.Count > 0)
+            {
+                builder.Description += "\nYou have already signed up for the following tournaments, you can edit your team by selecting any of them.\n\n";
+
+                foreach (TourneyModel tourney in registeredTournaments.Values)
+                {
+                    builder.Description += $"{tourney.Tid}. {tourney.Name} - [{tourney.PlayerCount}/{tourney.MaxPlayers}]\n";
+                }
             }
 
             await channel.SendMessageAsync("", false, builder.Build());
@@ -322,14 +347,14 @@ namespace ProjectIndigoPlus.Modules.Commands
                 });
                 return;
             }
-            else if(ctx.Message.Content.ToLower() == "exit")
+            else if (ctx.Message.Content.ToLower() == "exit")
             {
                 return;
             }
 
             int.TryParse(ctx.Message.Content, out tid);
 
-            if (!tournaments.ContainsKey(tid))
+            if (!openTournaments.ContainsKey(tid) && !registeredTournaments.ContainsKey(tid))
             {
                 await channel.SendMessageAsync("", false, new DiscordEmbedBuilder()
                 {
@@ -339,12 +364,16 @@ namespace ProjectIndigoPlus.Modules.Commands
                 });
                 goto RetryPicker;
             }
+            else if (registeredTournaments.ContainsKey(tid))
+            {
+                EditRegistration.EditRegistration(context, channel, tid);
+            }
 
             DiscordMessage confirmMessage = await channel.SendMessageAsync("", false, new DiscordEmbedBuilder()
             {
                 Color = Bot._config.Color,
                 Title = "Tourney Signup",
-                Description = $"Cool! Let's signup for the {tournaments[tid].Name}!\n\n" +
+                Description = $"Cool! Let's signup for the {openTournaments[tid].Name}!\n\n" +
                 $"First, let me confirm your showdown name, is it still {showdownusername}?"
             });
 
@@ -431,13 +460,13 @@ namespace ProjectIndigoPlus.Modules.Commands
                     goto RetryTeam;
                 }
             }
-            else if(teamMessage.Message.Content.ToLower() == "exit")
+            else if (teamMessage.Message.Content.ToLower() == "exit")
             {
                 return;
             }
             if (string.IsNullOrEmpty(team))
             {
-                team = teamMessage.Message.Content.Replace('`',' ').Trim();
+                team = teamMessage.Message.Content.Replace('`', ' ').Trim();
             }
 
             DiscordMessage teamConfirmMessage = await channel.SendMessageAsync("", false, new DiscordEmbedBuilder()
