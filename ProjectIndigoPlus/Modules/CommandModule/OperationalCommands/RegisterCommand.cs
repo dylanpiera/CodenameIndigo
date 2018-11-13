@@ -246,7 +246,7 @@ namespace ProjectIndigoPlus.Modules.Commands
             {
                 await conn.OpenAsync();
 
-                MySqlCommand cmd = new MySqlCommand($"SELECT `tid`,`tournament`,`regstart`,`regend`,`closure`,`maxplayers`,`minplayers` FROM `tournaments` WHERE `regstart` <= {DateTimeOffset.Now.ToUnixTimeSeconds()} AND `regend` >= {DateTimeOffset.Now.ToUnixTimeSeconds()} ORDER BY `tid` DESC", conn);
+                MySqlCommand cmd = new MySqlCommand($"SELECT `tournaments`.`tid`,`tournaments`.`tournament`,`tournaments`.`regstart`,`tournaments`.`regend`,`tournaments`.`closure`,`tournaments`.`maxplayers`,`tournaments`.`minplayers`,COUNT(`teams`.`uid`) as players FROM `tournaments` LEFT JOIN `teams` ON `tournaments`.`tid` = `teams`.`tid` WHERE `regstart` <= {DateTimeOffset.Now.ToUnixTimeSeconds()} AND `regend` >= {DateTimeOffset.Now.ToUnixTimeSeconds()} GROUP BY `tournaments`.`tid` ORDER BY `tid` DESC", conn);
 
                 using (MySqlDataReader reader = (MySqlDataReader)await cmd.ExecuteReaderAsync())
                 {
@@ -261,7 +261,8 @@ namespace ProjectIndigoPlus.Modules.Commands
                             RegEnd = DateTimeOffset.FromUnixTimeSeconds(reader.GetInt64("regend")),
                             Closure = DateTimeOffset.FromUnixTimeSeconds(reader.GetInt64("closure")),
                             MaxPlayers = reader.GetInt32("maxplayers"),
-                            MinPlayers = reader.GetInt32("minplayers")
+                            MinPlayers = reader.GetInt32("minplayers"),
+                            PlayerCount = reader.GetInt32("players")
                         });
                     }
                 }
@@ -342,7 +343,7 @@ namespace ProjectIndigoPlus.Modules.Commands
             {
                 return x.Channel.Id == channel.Id &&
                 x.Author.Id == context.User.Id &&
-                Regex.IsMatch(x.Content, @"^\d+$");
+                (Regex.IsMatch(x.Content, @"^\d+$") || (x.Content.ToLower() == "exit"));
             }
             );
             if (ctx == null)
