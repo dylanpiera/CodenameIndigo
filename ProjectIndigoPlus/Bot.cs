@@ -141,6 +141,7 @@ namespace ProjectIndigoPlus
             _cnext.RegisterCommands<Modules.Commands.Deregister>();
             _cnext.RegisterCommands<Modules.Commands.List>();
             _cnext.RegisterCommands<Modules.Commands.EditRegistration>();
+            _cnext.RegisterCommands<Modules.Commands.Battle>();
 
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             WriteCenter("Loaded commands:");

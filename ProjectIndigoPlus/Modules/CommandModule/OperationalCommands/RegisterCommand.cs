@@ -555,7 +555,7 @@ namespace ProjectIndigoPlus.Modules.Commands
                     Title = "Signup Complete!",
                     Description = $"Awesome, {context.User.Username}!\nThank you for signing up!\n\n" +
                     $"I will let you know when the tournament begins and give you information from there!\n" +
-                    $"You can edit your signup by calling this command again!" +
+                    $"You can edit your signup by calling this command again!\n" +
                     $"Good luck, and keep fighting!"
                 });
             }
