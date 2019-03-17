@@ -5,7 +5,6 @@ using DSharpPlus.Interactivity;
 using ProjectIndigoPlus.Entities;
 using System;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -142,6 +141,7 @@ namespace ProjectIndigoPlus
             _cnext.RegisterCommands<Modules.Commands.List>();
             _cnext.RegisterCommands<Modules.Commands.EditRegistration>();
             _cnext.RegisterCommands<Modules.Commands.Battle>();
+            _cnext.RegisterCommands<Modules.Commands.Password>();
 
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             WriteCenter("Loaded commands:");

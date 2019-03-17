@@ -5,6 +5,7 @@ using DSharpPlus.Interactivity;
 using MySql.Data.MySqlClient;
 using ProjectIndigoPlus.Entities;
 using ProjectIndigoPlus.Modules.HelperModule;
+using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
