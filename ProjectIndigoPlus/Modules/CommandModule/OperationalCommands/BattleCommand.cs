@@ -14,7 +14,7 @@ namespace ProjectIndigoPlus.Modules.Commands
         private const string SQLSTRING = "SELECT `battles`.`round` as Round, `battles`.`player1` as P1ID, `battles`.`player2` as P2ID, P1.showdownusername as P1name, P2.showdownusername as P2name FROM `battles` INNER JOIN `members` AS P1 ON ( P1.`uid` = `battles`.`player1` ) INNER JOIN `members` AS P2 ON ( P2.`uid` = `battles`.`player2` ) WHERE (`player1` = @uid OR `player2` = @uid) AND `battles`.`tid` = @tid";
         #endregion
 
-        [Command("battle"), 
+        [Command("battle"),
         //Aliases(""),
         Description("Shows your current battle.")]
         public async Task ExecuteCommand(CommandContext context)
@@ -28,11 +28,25 @@ namespace ProjectIndigoPlus.Modules.Commands
                 await context.Channel.TriggerTypingAsync();
             }
 
-            await context.Channel.SendMessageAsync("", false, await BuildBattleMessage(new DiscordEmbedBuilder()
+            DiscordEmbed BattleMessage = await BuildBattleMessage(new DiscordEmbedBuilder()
             {
                 Title = $"Current battles for {context.User.Username}",
                 Color = Bot._config.Color
-            }, context.User.Id));
+            }, context.User.Id);
+            if (string.IsNullOrEmpty(BattleMessage.Description))
+            {
+                await context.Channel.SendMessageAsync("", false, new DiscordEmbedBuilder()
+                {
+                    Title = $"Current battles for {context.User.Username}",
+                    Color = DiscordColor.Red,
+                    Description = "You have no due battles."
+                });
+            }
+            else
+            {
+                await context.Channel.SendMessageAsync("", false, BattleMessage);
+            }
+            await context.Message.DeleteOwnReactionAsync(DiscordEmoji.FromName(context.Client, ":typing:"));
         }
 
 
@@ -52,17 +66,35 @@ namespace ProjectIndigoPlus.Modules.Commands
 
             try
             {
-                await context.Channel.SendMessageAsync("", false, await BuildBattleMessage(new DiscordEmbedBuilder()
+                DiscordEmbed BattleMessage = await BuildBattleMessage(new DiscordEmbedBuilder()
                 {
-                    Title = $"Current battles for {context.User.Username}",
+                    Title = $"Current battles for {input.Username}",
                     Color = Bot._config.Color
-                }, input.Id));
+                }, input.Id);
+
+                if (string.IsNullOrEmpty(BattleMessage.Description))
+                {
+                    await context.Channel.SendMessageAsync("", false, new DiscordEmbedBuilder()
+                    {
+                        Title = $"Current battles for {input.Username}",
+                        Color = DiscordColor.Red,
+                        Description = $"{input.Username} has no due battles."
+                    });
+                }
+                else
+                {
+                    await context.Channel.SendMessageAsync("", false, BattleMessage);
+                }
             }
             catch (Exception e)
             {
                 Bot.DebugLogger.LogMessage(DSharpPlus.LogLevel.Critical, "Battle Command" + "", e.ToString(), DateTime.Now);
 
                 await context.Channel.SendMessageAsync("An unforseen error occured.");
+            }
+            finally
+            {
+                await context.Message.DeleteOwnReactionAsync(DiscordEmoji.FromName(context.Client, ":typing:"));
             }
         }
 
