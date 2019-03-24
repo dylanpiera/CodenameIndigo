@@ -144,6 +144,7 @@ namespace ProjectIndigoPlus
             _cnext.RegisterCommands<Modules.Commands.Password>();
             _cnext.RegisterCommands<Modules.Commands.Teams>();
             _cnext.RegisterCommands<Modules.Commands.BattleReplay>();
+            _cnext.RegisterCommands<Modules.Commands.Update>();
 
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             WriteCenter("Loaded commands:");

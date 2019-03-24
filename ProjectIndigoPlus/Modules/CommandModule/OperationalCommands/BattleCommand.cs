@@ -166,7 +166,7 @@ namespace ProjectIndigoPlus.Modules.Commands
 
             return builder.Build();
         }
-        private async Task<DiscordEmbed> BuildBattleMessage(DiscordEmbedBuilder builder)
+        public static async Task<DiscordEmbed> BuildBattleMessage(DiscordEmbedBuilder builder)
         {
             MySqlConnection conn = DatabaseHelper.GetClosedConnection();
 

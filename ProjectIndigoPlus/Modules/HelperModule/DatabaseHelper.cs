@@ -24,7 +24,7 @@ namespace ProjectIndigoPlus.Modules.HelperModule
             try
             {
                 await conn.OpenAsync();
-                string commandstring = "SELECT `tid`,`tournament`,`regstart`,`regend`,`closure`,`maxplayers`,`minplayers` FROM `tournaments` ORDER BY `tid` DESC LIMIT 0,1";
+                string commandstring = "SELECT * FROM `tournaments` ORDER BY `tid` DESC LIMIT 0,1";
                 MySqlCommand cmd = new MySqlCommand(commandstring, conn);
                 using (MySqlDataReader reader = (MySqlDataReader)await cmd.ExecuteReaderAsync())
                 {
@@ -38,7 +38,8 @@ namespace ProjectIndigoPlus.Modules.HelperModule
                             RegEnd = DateTimeOffset.FromUnixTimeSeconds(reader.GetInt64("regend")),
                             Closure = DateTimeOffset.FromUnixTimeSeconds(reader.GetInt64("closure")),
                             MaxPlayers = reader.GetInt32("maxplayers"),
-                            MinPlayers = reader.GetInt32("minplayers")
+                            MinPlayers = reader.GetInt32("minplayers"),
+                            State = reader.GetInt16("state")
                         };
                     }
                 }

@@ -14,5 +14,6 @@ namespace ProjectIndigoPlus.Modules.ModelModule
         public int MaxPlayers { get; set; }
         public int PlayerCount { get; set; }
         public string Name { get; set; }
+        public short State { get; set; }
     }
 }

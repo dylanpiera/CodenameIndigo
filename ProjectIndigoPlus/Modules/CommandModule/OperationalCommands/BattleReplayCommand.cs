@@ -197,7 +197,7 @@ namespace ProjectIndigoPlus.Modules.Commands
                 }
                 catch (Exception e)
                 {
-                    Bot.DebugLogger.LogMessage(DSharpPlus.LogLevel.Critical, "", e.ToString(), DateTime.Now);
+                    Bot.DebugLogger.LogMessage(DSharpPlus.LogLevel.Critical, "Battle Replay", e.ToString(), DateTime.Now);
                     await context.Channel.SendMessageAsync("", false, new DiscordEmbedBuilder()
                     {
                         Color = DiscordColor.Red,
