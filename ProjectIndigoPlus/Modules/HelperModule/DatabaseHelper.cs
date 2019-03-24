@@ -62,9 +62,9 @@ namespace ProjectIndigoPlus.Modules.HelperModule
         /// <param name="conn"></param>
         /// <param name="commandstring"></param>
         /// <returns></returns>
-        public static async Task<Dictionary<string, object>> GetRowDataFromDBAsync(this MySqlConnection conn, string commandstring)
+        public static async Task<Dictionary<string, T>> GetRowDataFromDBAsync<T>(this MySqlConnection conn, string commandstring)
         {
-            Dictionary<string, object> dictionary = new Dictionary<string, object>();
+            Dictionary<string, T> dictionary = new Dictionary<string, T>();
             try
             {
                 await conn.OpenAsync();
@@ -75,14 +75,14 @@ namespace ProjectIndigoPlus.Modules.HelperModule
 
                     for (int i = 0; i < reader.FieldCount; i++)
                     {
-                        dictionary.Add(reader.GetName(i), reader.GetValue(i));
+                        dictionary.Add(reader.GetName(i), (T) reader.GetValue(i));
                     }
                 }
 
             }
             catch (Exception e)
             {
-                Bot.DebugLogger.LogMessage(DSharpPlus.LogLevel.Critical, "GetDataFromDBAsync with cmdString: " + commandstring, e.ToString(), DateTime.Now);
+                Bot.DebugLogger.LogMessage(DSharpPlus.LogLevel.Debug, "GetDataFromDBAsync with cmdString: " + commandstring, e.ToString(), DateTime.Now);
                 return null;
             }
             finally
